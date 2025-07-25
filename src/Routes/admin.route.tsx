@@ -1,0 +1,180 @@
+//* ------------------ICONS------------------
+import dashboardLogo from "/images/dashboard-logo/dashboard.svg";
+import userLogo from "/images/dashboard-logo/user.svg";
+import orderLogo from "/images/dashboard-logo/order.svg";
+import gearLogo from "/images/dashboard-logo/gear.svg";
+import workshopLogo from "/images/dashboard-logo/workshop.svg";
+import approvalsLogo from "/images/dashboard-logo/approvals.svg";
+import earningLogo from "/images/dashboard-logo/earning.svg";
+import categoryLogo from "/images/dashboard-logo/category.svg";
+import reportsLogo from "/images/dashboard-logo/reports.svg";
+import messageLogo from "/images/dashboard-logo/message.svg";
+import comissionLogo from "/images/dashboard-logo/comission.svg";
+import feedbackLogo from "/images/dashboard-logo/feedback.svg";
+import documentationLogo from "/images/dashboard-logo/documentation.svg";
+import settingsLogo from "/images/dashboard-logo/settings.svg";
+
+//* ------------------IMPORT COMPONENTS------------------
+import AdminDashboard from "../pages/Admin/AdminDashboard";
+import AdminDeliveryManagement from "../pages/Admin/AdminDeliveryManagement";
+import AdminGearMarketplacePage from "../pages/Admin/AdminGearMarketplace";
+import AdminWorkshopManagement from "../pages/Admin/AdminWorkshopManagement";
+import MessagePage from "../pages/Admin/MessagePage";
+import AdminAllTransaction from "../pages/Admin/AdminAllTransaction";
+import AdminAllReports from "../pages/Admin/AdminAllReports";
+import AdminCommissionSetupPage from "../pages/Admin/AdminCommissionSetupPage";
+import AdminAllFeedback from "../pages/Admin/AdminAllFeedback";
+import TermsOfService from "../pages/Common/settings/TermsOfService";
+import GDPR from "../pages/Common/settings/GDPR";
+import HowOrderingWorks from "../pages/Common/settings/HowOrderingWorks";
+import HowItWorks from "../pages/Common/settings/HowItWorks";
+import FrameworkAgreement from "../pages/Common/settings/FrameworkAgreement";
+import ProfileSettingsPage from "../pages/Common/settings/Profile";
+import AdminAllCategories from "../pages/Admin/AdminAllCategories";
+import AdminOrderManagement from "../pages/Admin/AdminOrderManagement";
+import AdminAllUsers from "../pages/Admin/AdminAllUsers";
+import AdminApprovals from "../pages/Admin/AdminApprovals";
+
+export const adminPaths = [
+  {
+    path: "dashboard",
+    element: <AdminDashboard />,
+    key: "dashboard",
+    name: "Dashboard",
+    icon: dashboardLogo,
+  },
+  {
+    path: "users-management",
+    element: <AdminAllUsers />,
+    key: "users-management",
+    name: "Users Management",
+    icon: userLogo,
+  },
+  {
+    path: "order-management",
+    element: <AdminOrderManagement />,
+    key: "order-management",
+    name: "Order Management",
+    icon: orderLogo,
+  },
+  {
+    path: "delivery-management",
+    element: <AdminDeliveryManagement />,
+    key: "delivery-management",
+    name: "Delivery Management",
+    icon: orderLogo,
+  },
+
+  {
+    path: "gear-marketplace",
+    element: <AdminGearMarketplacePage />,
+    key: "gear-marketplace",
+    name: "Gear Marketplace",
+    icon: gearLogo,
+  },
+  {
+    path: "workshop-management",
+    element: <AdminWorkshopManagement />,
+    key: "workshop-management",
+    name: "Workshop Management",
+    icon: workshopLogo,
+  },
+  {
+    path: "approvals",
+    element: <AdminApprovals />,
+    key: "approvals",
+    name: "Approvals",
+    icon: approvalsLogo,
+  },
+  {
+    path: "earning",
+    element: <AdminAllTransaction />,
+    key: "earning",
+    name: "Earnings",
+    icon: earningLogo,
+  },
+  {
+    path: "categories",
+    element: <AdminAllCategories />,
+    key: "categories",
+    name: "Categories",
+    icon: categoryLogo,
+  },
+  {
+    path: "reports",
+    element: <AdminAllReports />,
+    key: "reports",
+    name: "Reports",
+    icon: reportsLogo,
+  },
+  {
+    path: "messages",
+    element: <MessagePage />,
+    key: "messages",
+    name: "Messages",
+    icon: messageLogo,
+  },
+  {
+    path: "commission-setup",
+    element: <AdminCommissionSetupPage />,
+    key: "commission-setup",
+    name: "Commission Setup",
+    icon: comissionLogo,
+  },
+  {
+    path: "feedback",
+    element: <AdminAllFeedback />,
+    key: "feedback",
+    name: "Feedback",
+    icon: feedbackLogo,
+  },
+  {
+    key: "documentation",
+    name: "Documentation",
+    icon: documentationLogo,
+    children: [
+      {
+        key: "terms-of-service",
+        path: "documentation/terms-of-service",
+        name: "Terms of Service",
+        icon: dashboardLogo,
+        element: <TermsOfService />,
+      },
+      {
+        key: "gdpr",
+        path: "documentation/gdpr",
+        name: "GDPR",
+        icon: dashboardLogo,
+        element: <GDPR />,
+      },
+      {
+        key: "how-ordering-works",
+        path: "documentation/how-ordering-works",
+        name: "How Ordering Works",
+        icon: dashboardLogo,
+        element: <HowOrderingWorks />,
+      },
+      {
+        key: "how-it-works",
+        path: "documentation/how-it-works",
+        name: "How It Works",
+        icon: dashboardLogo,
+        element: <HowItWorks />,
+      },
+      {
+        key: "framework-agreement",
+        path: "documentation/framework-agreement",
+        name: "Framework Agreement",
+        icon: dashboardLogo,
+        element: <FrameworkAgreement />,
+      },
+    ],
+  },
+  {
+    path: "profile",
+    element: <ProfileSettingsPage />,
+    key: "profile",
+    name: "Profile",
+    icon: settingsLogo,
+  },
+];
