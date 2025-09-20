@@ -3,6 +3,9 @@ import { Form, FormInstance } from "antd";
 import ReusableForm from "../../../ui/Form/ReuseForm";
 import ReuseInput from "../../../ui/Form/ReuseInput";
 import ReuseButton from "../../../ui/Button/ReuseButton";
+import { useChangePasswordMutation } from "../../../redux/features/auth/authApi";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
 
 const inputStructure = [
   {
@@ -57,25 +60,25 @@ const inputStructure = [
 const ChangePassword = () => {
   const [form] = Form.useForm();
 
+  const [updatePassword] = useChangePasswordMutation();
+
   const onFinish = async (values: any) => {
     const data = {
       oldPassword: values.currentPassword,
       newPassword: values.confirmNewPassword,
     };
-    console.log(data);
 
-    // const res = await tryCatchWrapper(
-    //   updatePassword,
-    //   { body: data },
-    //   "Changing Password..."
-    // );
-    // if (res.statusCode === 200) {
-    //   Cookies.remove("forkprint_accessToken");
-    //   Cookies.remove("forkprint_userData");
+    const res = await tryCatchWrapper(
+      updatePassword,
+      { body: data },
+      "Changing Password..."
+    );
+    if (res?.statusCode === 200) {
+      Cookies.remove("frafoldashboard_accessToken");
 
-    //   window.location.href = "/sign-in";
-    //   window.location.reload();
-    // }
+      window.location.href = "/sign-in";
+      window.location.reload();
+    }
   };
   return (
     <div className="lg:w-[70%] mt-20">

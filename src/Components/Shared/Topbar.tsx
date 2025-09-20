@@ -3,8 +3,12 @@
 import { BarsOutlined, BellFilled } from "@ant-design/icons";
 import { Dropdown } from "antd";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { AllImages } from "../../../public/images/AllImages";
+import { getImageUrl } from "../../helpers/config/envConfig";
+import { useState } from "react";
+import useUserData from "../../hooks/useUserData";
+import { useGetProfileQuery } from "../../redux/features/profile/profileApi";
+import SpinLoader from "../../ui/SpinLoader";
 
 const notifications = [
   {
@@ -35,23 +39,33 @@ const notifications = [
 ];
 
 const Topbar = ({ collapsed, setCollapsed }: any) => {
-  const user = JSON.parse(localStorage.getItem("user_data") || "null");
-  const [notificationCount, setNotificationCount] = useState(
-    notifications.length
-  );
+  const serverUrl = getImageUrl();
+  const [open, setOpen] = useState(false);
 
-  console.log("notificationCount:", notificationCount);
+  const user = useUserData();
+  const { data, isFetching } = useGetProfileQuery({});
 
-  const handleMenuClick = () => {
-    setNotificationCount(0); // Reset notification count when the menu is clicked
-    setCollapsed(false);
-  };
+  const profileData = data?.data;
+
+  const profileImage = profileData?.profileImage;
+
+  // const { data: notification, isFetching: notificationFetching } =
+  //   useGetNotificationQuery(
+  //     {
+  //       page: 1,
+  //       limit: 5,
+  //     },
+  //     {
+  //       skip: !open,
+  //       refetchOnMountOrArgChange: open,
+  //     }
+  //   );
+  // const notificationData = notification?.data?.notifications;
 
   const notificationMenu = (
     <div
       className="flex flex-col gap-4 w-full text-center bg-white p-4 rounded-lg"
       style={{ boxShadow: "0px 0px 5px  rgba(0, 0, 0, 0.25)" }}
-      onClick={handleMenuClick}
     >
       {notifications.map((notification) => (
         <div className="test-start" key={notification.id}>
@@ -85,6 +99,9 @@ const Topbar = ({ collapsed, setCollapsed }: any) => {
           overlay={notificationMenu}
           trigger={["hover"]}
           placement="bottomRight"
+          onOpenChange={(open: boolean) => {
+            setOpen(open);
+          }}
           className="cursor-pointer"
         >
           <BellFilled
@@ -92,22 +109,30 @@ const Topbar = ({ collapsed, setCollapsed }: any) => {
             className="bg-primary-color py-[18px] px-2 text-xl rounded-full h-6 font-bold !text-secondary-color "
           />
         </Dropdown>
-        <Link to="profile">
-          <div className="flex items-center justify-center gap-0 bg-white text-base-color rounded-lg  px-2 py-1  border border-secondary-color ">
-            <img
-              src={AllImages.profile}
-              alt="profile_pic"
-              style={{ width: "40px", height: "40px", marginRight: "10px" }}
-              className="rounded-full"
-            />
-            <div className="flex flex-col justify-center">
-              <p className="text-base-color font-semibold text-sm">
-                David Wilson
-              </p>
-              <p className="text-base-color text-xs">Admin</p>
-            </div>
+        {isFetching ? (
+          <div className="px-10 py-4">
+            <SpinLoader />
           </div>
-        </Link>
+        ) : (
+          <Link to="profile">
+            <div className="flex items-center justify-center gap-0 bg-white text-base-color rounded-lg  px-2 py-1  border border-secondary-color ">
+              <img
+                src={
+                  profileImage ? serverUrl + profileImage : AllImages.profile
+                }
+                alt="profile_pic"
+                style={{ width: "40px", height: "40px", marginRight: "10px" }}
+                className="rounded-full"
+              />
+              <div className="flex flex-col justify-center">
+                <p className="text-base-color font-semibold text-sm">
+                  {profileData?.name}
+                </p>
+                <p className="text-base-color text-xs">Admin</p>
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
     </div>
   );

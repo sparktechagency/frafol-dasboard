@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     ),
     label: (
       <div onClick={() => localStorage.removeItem("user_data")}>
-        <NavLink to="/signin">Logout</NavLink>
+        <NavLink to="/sign-in">Logout</NavLink>
       </div>
     ),
   });

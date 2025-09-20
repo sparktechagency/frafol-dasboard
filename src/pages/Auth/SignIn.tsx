@@ -1,23 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { Checkbox } from "antd";
+import { Checkbox, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import Container from "../../ui/Container";
 import ReusableForm from "../../ui/Form/ReuseForm";
 import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
 import { AllImages } from "../../../public/images/AllImages";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
+import { useLoginMutation } from "../../redux/features/auth/authApi";
+import useUserData from "../../hooks/useUserData";
+import { useEffect } from "react";
 
 const SignIn = () => {
+  const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    const data = {
-      ...values,
-      role: "admin",
-    };
-    localStorage.setItem("user_data", JSON.stringify(data));
-    router("/");
+
+  const [login] = useLoginMutation();
+
+  const userExist = useUserData();
+
+  useEffect(() => {
+    if (userExist?.role === "admin") {
+      router("/", { replace: true });
+    }
+  }, [router, userExist]);
+
+  const onFinish = async (values: any) => {
+    const res = await tryCatchWrapper(login, { body: values }, "Logging In...");
+    console.log(res?.data?.user?.role);
+    if (res?.statusCode === 200 && res?.data?.user?.role === "admin") {
+      Cookies.set("frafoldashboard_accessToken", res?.data?.accessToken, {
+        path: "/",
+        expires: 365,
+        secure: false,
+      });
+      form.resetFields();
+      router("/", { replace: true });
+    } else if (res?.statusCode === 200 && res?.data?.user?.role !== "admin") {
+      form.resetFields();
+      toast.error("Access Denied", {
+        duration: 2000,
+      });
+    }
   };
+
   return (
     <div className="text-base-color">
       <Container>
@@ -43,6 +72,12 @@ const SignIn = () => {
                 label="Email"
                 placeholder="Enter Your Email"
                 inputClassName="!py-2"
+                rules={[
+                  {
+                    required: true,
+                    message: "Email is required",
+                  },
+                ]}
               />
               <ReuseInput
                 inputType="password"
@@ -50,6 +85,12 @@ const SignIn = () => {
                 label="Password"
                 placeholder="Enter Your Password "
                 inputClassName="!py-2"
+                rules={[
+                  {
+                    required: true,
+                    message: "Password is required",
+                  },
+                ]}
               />
               <div className="flex justify-between items-center mt-10 mb-5">
                 <Checkbox className="!text-base-color">Remember me</Checkbox>

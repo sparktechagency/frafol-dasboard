@@ -2,10 +2,16 @@
 import { Form, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { IoCameraOutline } from "react-icons/io5";
-import { AllImages } from "../../../../public/images/AllImages";
 import ReusableForm from "../../../ui/Form/ReuseForm";
 import ReuseInput from "../../../ui/Form/ReuseInput";
 import ReuseButton from "../../../ui/Button/ReuseButton";
+import Loading from "../../../ui/Loading";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { getImageUrl } from "../../../helpers/config/envConfig";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "../../../redux/features/profile/profileApi";
 
 const inputStructure = [
   {
@@ -31,35 +37,27 @@ const inputStructure = [
     rules: [{ required: true, message: "Full name is required" }],
     disable: false,
   },
-  {
-    name: "phoneNumber",
-    type: "text",
-    inputType: "tel",
-    label: "Phone number",
-    placeholder: "Enter your phone number",
-    labelClassName: "!font-medium",
-    inputClassName: "!py-2 !w-full",
-    rules: [{ required: true, message: "Phone number is required" }],
-    disable: false,
-  },
 ];
 
 const EditProfile = () => {
   const [form] = Form.useForm();
+  const imageApiUrl = getImageUrl();
+  const { data, isFetching } = useGetProfileQuery({});
+  const [updateProfile] = useUpdateProfileMutation({});
 
-  const [imageUrl, setImageUrl] = useState<string>(AllImages.profile);
-  const profileImage = AllImages.profile;
+  const profileData = data?.data;
+
+  const profileImage = imageApiUrl + profileData?.profileImage;
+
+  const [imageUrl, setImageUrl] = useState(profileImage);
 
   useEffect(() => {
-    // if (profileData) {
+    setImageUrl(profileImage);
     form.setFieldsValue({
-      email: "user@gmail.com",
-      fullName: "John Doe",
-      phoneNumber: "1234567890",
+      email: profileData?.email,
+      fullName: profileData?.name,
     });
-    setImageUrl(AllImages.profile); // Set the initial image URL
-    // }
-  }, [form]);
+  }, [form, profileData?.email, profileData?.name, profileImage]);
 
   const handleImageUpload = (info: any) => {
     if (info.file.status === "removed") {
@@ -75,32 +73,28 @@ const EditProfile = () => {
   };
 
   const onFinish = async (values: any) => {
-    // const userImage = values.image?.fileList?.[0]?.originFileObj;
-
-    // const data = {
-    //   fullName: values.fullName,
-    //   phoneNumber: values.phoneNumber,
-    // };
-    // const formData = new FormData();
-    // if (userImage) {
-    //   formData.append("profileImage", userImage);
-    // }
-    // formData.append("data", JSON.stringify(data));
-
-    // await tryCatchWrapper(
-    //   updateProfile,
-    //   { body: formData },
-    //   "Updating Profile..."
-    // );
-    console.log("Submitted Values:", values);
+    const formData = new FormData();
+    if (values?.image?.file?.originFileObj) {
+      formData.append("image", values?.image?.file?.originFileObj);
+    }
+    const data = {
+      name: values?.fullName,
+    };
+    formData.append("data", JSON.stringify(data));
+    await tryCatchWrapper(
+      updateProfile,
+      { body: formData },
+      "Updating Profile..."
+    );
   };
 
-  // if (isFetching)
-  //   return (
-  //     <div className="w-full h-[70vh] flex justify-center items-center">
-  //       <FadeLoader color="#ed9388" />
-  //     </div>
-  //   );
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center min-h-[90vh]">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className=" mt-10  rounded-xl">

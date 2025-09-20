@@ -6,21 +6,62 @@ import { MdVerifiedUser } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import Container from "../../ui/Container";
 import ReuseButton from "../../ui/Button/ReuseButton";
+import {
+  useForgetOtpVerifyMutation,
+  useResendForgetOTPMutation,
+} from "../../redux/features/auth/authApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import Cookies from "js-cookie";
 
 const OTPVerify = () => {
   const router = useNavigate();
   const [otp, setOtp] = useState("");
 
-  const handleOTPSubmit = () => {
-    if (otp.length === 6) {
-      console.log("OTP:", otp);
-      if (window?.location?.pathname === "/sign-up/otp-verify") {
-        router("/");
-      } else {
+  const forgottenEmail = JSON.parse(
+    Cookies.get("frafoldashboard_forgetEmail") || "null"
+  );
+
+  const [otpMatch] = useForgetOtpVerifyMutation();
+  const [resendOtp] = useResendForgetOTPMutation();
+
+  const handleOTPSubmit = async () => {
+    if (otp.length === 4) {
+      const res = await tryCatchWrapper(
+        otpMatch,
+        { body: { otp: otp } },
+        "Verifying..."
+      );
+      if (res?.statusCode === 200) {
+        Cookies.remove("frafoldashboard_forgetToken");
+        Cookies.remove("frafoldashboard_forgetEmail");
+        Cookies.set(
+          "frafoldashboard_forgetOtpMatchToken",
+          res.data.forgetOtpMatchToken,
+          {
+            path: "/",
+            expires: 1,
+          }
+        );
+
+        setOtp("");
         router("/update-password");
       }
     }
   };
+
+  const handleResendOtp = async () => {
+    await tryCatchWrapper(
+      resendOtp,
+      {
+        body: {
+          purpose: "forget-password", // "reset-password" | "forget-password"
+        },
+      },
+      "Sending OTP..."
+    );
+  };
+
+  console.log(forgottenEmail);
 
   return (
     <div className="text-base-color">
@@ -33,7 +74,8 @@ const OTPVerify = () => {
                 Verify Your Email
               </h1>
               <p className="text-lg sm:text-xl mb-2 text-base-color">
-                Enter the OTP sent to your email
+                Enter the OTP sent on{" "}
+                <span className="text-secondary-color">{forgottenEmail}</span>
               </p>
             </div>
 
@@ -45,7 +87,7 @@ const OTPVerify = () => {
                       rounded-lg mr-[10px] sm:mr-[20px] !text-base-color "
                     value={otp}
                     onChange={setOtp}
-                    numInputs={6}
+                    numInputs={4}
                     renderInput={(props) => <input {...props} required />}
                   />
                 </div>
@@ -61,7 +103,10 @@ const OTPVerify = () => {
             </Form>
             <div className="flex justify-center gap-2 py-1 mt-5">
               <p>Didn’t receive code?</p>
-              <p className="!text-secondary-color !underline font-semibold cursor-pointer">
+              <p
+                onClick={handleResendOtp}
+                className="!text-secondary-color !underline font-semibold cursor-pointer"
+              >
                 Click to resend
               </p>
             </div>

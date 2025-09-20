@@ -6,12 +6,32 @@ import Container from "../../ui/Container";
 import ReusableForm from "../../ui/Form/ReuseForm";
 import ReuseInput from "../../ui/Form/ReuseInput";
 import ReuseButton from "../../ui/Button/ReuseButton";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import { Form } from "antd";
+import { useResetPasswordMutation } from "../../redux/features/auth/authApi";
+import Cookies from "js-cookie";
 
 const UpdatePassword = () => {
+  const [form] = Form.useForm();
   const router = useNavigate();
-  const onFinish = (values: any) => {
-    console.log("Received values of update form:", values);
-    router("/sign-in");
+  const [resetPassword] = useResetPasswordMutation();
+
+  const onFinish = async (values: any) => {
+    const data = {
+      newPassword: values.password,
+      confirmPassword: values.confirmPassword,
+    };
+
+    const res = await tryCatchWrapper(
+      resetPassword,
+      { body: data },
+      "Changing Password..."
+    );
+    if (res?.statusCode === 200) {
+      form.resetFields();
+      Cookies.remove("frafoldashboard_forgetOtpMatchToken");
+      router("/sign-in");
+    }
   };
 
   return (

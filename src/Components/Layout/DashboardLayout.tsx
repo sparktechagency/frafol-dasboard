@@ -15,9 +15,11 @@ import Sider from "antd/es/layout/Sider";
 import Topbar from "../Shared/Topbar";
 import { AllImages } from "../../../public/images/AllImages";
 import logout from "../../../public/images/dashboard-logo/logout.svg";
+import useUserData from "../../hooks/useUserData";
+import Cookies from "js-cookie";
 
 const DashboardLayout = () => {
-  const userRole = JSON.parse(localStorage.getItem("user_data") || "null");
+  const userData = useUserData();
   const location = useLocation();
 
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -34,7 +36,7 @@ const DashboardLayout = () => {
     }
   };
 
-  const defaultUrl = userRole?.role === "admin" ? "/admin" : "/";
+  const defaultUrl = userData?.role === "admin" ? "/admin" : "/";
   const normalizedPath = location.pathname.replace(defaultUrl, "");
 
   const [collapsed, setCollapsed] = useState(false);
@@ -59,17 +61,23 @@ const DashboardLayout = () => {
 
   const activeKeys = getActiveKeys(normalizedPath);
   const menuItems =
-    userRole?.role === "admin"
+    userData?.role === "admin"
       ? //   ? sidebarItemsGenerator(adminPaths, "admin")
-        sidebarItemsGenerator(adminPaths, userRole?.role)
+        sidebarItemsGenerator(adminPaths, userData?.role)
       : [];
+
+  const handleLogout = () => {
+    Cookies.remove("frafoldashboard_accessToken");
+    window.location.href = "/sign-in";
+    window.location.reload();
+  };
 
   menuItems.push({
     key: "logout",
     icon: <img src={logout} alt="logout" width={16} height={16} />,
     label: (
-      <div onClick={() => localStorage.removeItem("user_data")}>
-        <NavLink to="/signin">Logout</NavLink>
+      <div onClick={handleLogout}>
+        <NavLink to="/sign-in">Logout</NavLink>
       </div>
     ),
   });

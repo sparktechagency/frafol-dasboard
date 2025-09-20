@@ -18,27 +18,24 @@ import UpdatePassword from "../pages/Auth/UpdatePassword";
 
 import NotFound from "../ui/NotFound/NotFound";
 import DashboardLayout from "../Components/Layout/DashboardLayout";
-
-interface User {
-  email: string;
-  password: string;
-  role: string;
-}
+import useUserData from "../hooks/useUserData";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function AuthRedirect() {
+  const user = useUserData();
   const navigate = useNavigate();
 
+  console.log("user", user);
+
   useEffect(() => {
-    const user = JSON.parse(
-      localStorage.getItem("user_data") || "null"
-    ) as User | null;
     if (user && user.role) {
-      navigate(`/${user.role}/dashboard`, { replace: true });
+      navigate(`/${user.role}/overview`, {
+        replace: true,
+      });
     } else {
-      navigate("/signin", { replace: true });
+      navigate("/sign-in", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   // Optionally display a loading indicator
   return <Loading />;
@@ -71,7 +68,7 @@ const router: RouteObject[] = [
     children: routeGenerator(adminPaths), // Generating child routes dynamically
   },
   {
-    path: "signin",
+    path: "sign-in",
     element: <SignIn />,
   },
   {
