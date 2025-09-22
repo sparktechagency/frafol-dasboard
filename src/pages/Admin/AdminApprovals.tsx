@@ -6,20 +6,17 @@ import ProfessionalApprovalsTable from "../../ui/Tables/Approvals/ProfessionalAp
 import PackagesApprovalsTable from "../../ui/Tables/Approvals/PackagesApprovalsTable";
 import GearApprovalsTable from "../../ui/Tables/Approvals/GearApprovalsTable";
 import WorkshopApprovalsTable from "../../ui/Tables/Approvals/WorkshopApprovalsTable";
-import UserViewPortfolioModal from "../../ui/Modal/User/UserViewPortfolioModal";
 import ApprovalsViewModal from "../../ui/Modal/Approvals/ApprovalsViewModal";
+import {
+  useApproveProfessionalMutation,
+  useDeclineProfessionalMutation,
+  useGetAllPendingProfessionalsQuery,
+} from "../../redux/features/users/usersApi";
+import { IProfessional } from "../../types";
+import ApprovalModal from "../../ui/Modal/ApprovalModal";
+import DeclineModal from "../../ui/Modal/DeclineModal";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 const AdminApprovals = () => {
-  const professionalData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      name: `Jhon Doe`,
-      email: `j@j.com`,
-      role: `Photographer`,
-      specialization: `Wedding Photography`,
-      hourlyRate: `$50`,
-      location: `New York, USA`,
-    };
-  });
   const packageData = Array.from({ length: 20 }).map((_, index) => {
     return {
       id: index + 1,
@@ -55,6 +52,9 @@ const AdminApprovals = () => {
     };
   });
 
+  const [approveProfessional] = useApproveProfessionalMutation();
+  const [declineProfessional] = useDeclineProfessionalMutation();
+
   const [activeTab, setActiveTab] = useState<
     "professionals" | "packages" | "gear" | "workshop"
   >("professionals");
@@ -62,27 +62,75 @@ const AdminApprovals = () => {
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
+
+  const { data: professional, isFetching: professionalFetching } =
+    useGetAllPendingProfessionalsQuery(
+      {
+        page,
+        limit,
+        searchTerm: searchText,
+      },
+      { skip: activeTab !== "professionals", refetchOnMountOrArgChange: true }
+    );
+
+  const allProfessionals: IProfessional[] = professional?.data || [];
+  const totalProfessionals: number = professional?.meta?.total || 0;
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [isViewProtfolioModalVisible, setIsViewPortfolioModalVisible] =
-    useState(false);
-  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
+  const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
+  const [isDeclineModalVisible, setIsDeclineModalVisible] = useState(false);
 
-  const showViewUserModal = (record: any) => {
+  const [currentRecord, setCurrentRecord] = useState<IProfessional | null>(
+    null
+  );
+
+  const showApproveModal = (record: IProfessional) => {
+    setCurrentRecord(record);
+    setIsApproveModalVisible(true);
+  };
+
+  const showDeclineModal = (record: IProfessional) => {
+    setCurrentRecord(record);
+    setIsDeclineModalVisible(true);
+  };
+
+  const showViewUserModal = (record: IProfessional) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
 
-  const showViewPortfolioModal = (record: any) => {
-    setCurrentRecord(record);
-    setIsViewPortfolioModalVisible(true);
-  };
-
   const handleCancel = () => {
     setIsViewModalVisible(false);
-    setIsViewPortfolioModalVisible(false);
+    setIsApproveModalVisible(false);
+    setIsDeclineModalVisible(false);
     setCurrentRecord(null);
+  };
+
+  const handleApprove = async (record: IProfessional | null) => {
+    const res = await tryCatchWrapper(
+      approveProfessional,
+      {
+        params: record?._id,
+      },
+      "Approving..."
+    );
+
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
+  };
+  const handleDecline = async (record: IProfessional | null, value: any) => {
+    const res = await tryCatchWrapper(
+      declineProfessional,
+      {
+        params: record?._id,
+        body: value,
+      },
+      "Declining..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
 
   return (
@@ -108,13 +156,12 @@ const AdminApprovals = () => {
             value: "professionals",
             content: (
               <ProfessionalApprovalsTable
-                data={professionalData}
-                loading={false}
+                data={allProfessionals}
+                loading={professionalFetching}
                 showViewUserModal={showViewUserModal}
-                showViewPortfolioModal={showViewPortfolioModal}
                 setPage={setPage}
                 page={page}
-                total={professionalData.length}
+                total={totalProfessionals}
                 limit={limit}
               />
             ),
@@ -169,19 +216,28 @@ const AdminApprovals = () => {
         onTabChange={(tab) => {
           setActiveTab(tab);
           setPage(1); // Reset page when changing tabs
+          setSearchText(""); // Reset search when changing tabs
         }}
       />
       <ApprovalsViewModal
         isViewModalVisible={isViewModalVisible}
+        showApproveModal={showApproveModal}
+        showDeclineModal={showDeclineModal}
         handleCancel={handleCancel}
         currentRecord={currentRecord}
         activeTab={activeTab}
       />
-
-      <UserViewPortfolioModal
-        isViewProtfolioModalVisible={isViewProtfolioModalVisible}
-        handleCancel={handleCancel}
+      <ApprovalModal
+        isApprovalModalVisible={isApproveModalVisible}
+        handleCancel={() => setIsApproveModalVisible(false)}
         currentRecord={currentRecord}
+        handleApprove={handleApprove}
+      />
+      <DeclineModal
+        isDeclineModalVisible={isDeclineModalVisible}
+        handleCancel={() => setIsDeclineModalVisible(false)}
+        currentRecord={currentRecord}
+        handleDecline={handleDecline}
       />
     </div>
   );

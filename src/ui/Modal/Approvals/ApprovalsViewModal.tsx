@@ -10,15 +10,26 @@ import ReusableForm from "../../Form/ReuseForm";
 import ReuseInput from "../../Form/ReuseInput";
 import ReuseSelect from "../../Form/ReuseSelect";
 import { FaLink } from "react-icons/fa";
+import { IProfessional } from "../../../types";
 
 interface ApprovalsViewModalProps {
   isViewModalVisible: boolean;
+  showApproveModal: (record: any) => void;
+  showDeclineModal: (record: any) => void;
   handleCancel: () => void;
   currentRecord: any | null;
   activeTab: string;
 }
 
-const ProfessionalView = () => {
+const ProfessionalView = ({
+  showApproveModal,
+  showDeclineModal,
+  currentRecord,
+}: {
+  showApproveModal: (record: any) => void;
+  showDeclineModal: (record: any) => void;
+  currentRecord: IProfessional | null;
+}) => {
   return (
     <div className="p-5">
       <div className="">
@@ -56,10 +67,16 @@ const ProfessionalView = () => {
         <ReuseButton
           variant="secondary"
           className="!bg-success !border-success"
+          onClick={() => showApproveModal(currentRecord)}
         >
           Approve
         </ReuseButton>
-        <ReuseButton variant="secondary">Decline</ReuseButton>
+        <ReuseButton
+          variant="secondary"
+          onClick={() => showDeclineModal(currentRecord)}
+        >
+          Decline
+        </ReuseButton>
       </div>
     </div>
   );
@@ -316,6 +333,8 @@ const WorkshopView = () => {
 
 const ApprovalsViewModal: React.FC<ApprovalsViewModalProps> = ({
   isViewModalVisible,
+  showApproveModal,
+  showDeclineModal,
   handleCancel,
   currentRecord,
   activeTab,
@@ -330,7 +349,11 @@ const ApprovalsViewModal: React.FC<ApprovalsViewModalProps> = ({
       className={`${activeTab === "gear" ? "lg:!w-[1000px]" : "lg:!w-[450px]"}`}
     >
       {activeTab === "professionals" ? (
-        <ProfessionalView />
+        <ProfessionalView
+          showApproveModal={showApproveModal}
+          showDeclineModal={showDeclineModal}
+          currentRecord={currentRecord}
+        />
       ) : activeTab === "packages" ? (
         <PackageView />
       ) : activeTab === "gear" ? (

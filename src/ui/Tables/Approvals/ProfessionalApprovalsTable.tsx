@@ -1,27 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Space, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import ReuseTable from "../../../utils/ReuseTable";
-import ReuseButton from "../../Button/ReuseButton";
+import { IProfessional } from "../../../types";
 
 // Define the type for the props
 interface ProfessionalApprovalsTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IProfessional[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewUserModal: (record: any) => void; // Function to handle viewing a user
-  showViewPortfolioModal: (record: any) => void; // Function to handle blocking a user
+  showViewUserModal: (record: IProfessional) => void; // Function to handle viewing a user
   setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const ProfessionalApprovalsTable: React.FC<ProfessionalApprovalsTableProps> = ({
   data,
   loading,
   showViewUserModal,
-  showViewPortfolioModal,
   setPage,
   page,
   total,
@@ -32,35 +29,43 @@ const ProfessionalApprovalsTable: React.FC<ProfessionalApprovalsTableProps> = ({
       title: "UID",
       dataIndex: "id",
       key: "id",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
     },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Role", dataIndex: "role", key: "role" },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (role: string) =>
+        role === "both"
+          ? "Photographer/Videographer"
+          : role === "photographer"
+          ? "Photographer"
+          : "Videographer",
+    },
     {
       title: "Specialization",
       dataIndex: "specialization",
       key: "specialization",
-    },
-    {
-      title: "Protfolio",
-      dataIndex: "p",
-      key: "p",
-      render: () => (
-        <ReuseButton
-          onClick={showViewPortfolioModal}
-          variant="secondary"
-          className="!text-sm !py-2 !px-4"
-        >
-          View
-        </ReuseButton>
-      ),
+      width: 300,
+      render: (_: unknown, record: IProfessional) =>
+        record.role === "both"
+          ? [
+              record?.photographerSpecializations?.join(", "),
+              record?.videographerSpecializations?.join(", "),
+            ].join(" , ")
+          : record.role === "photographer"
+          ? record?.photographerSpecializations?.join(", ")
+          : record?.videographerSpecializations?.join(", "),
     },
     { title: "Hourly Rate", dataIndex: "hourlyRate", key: "hourlyRate" },
-    { title: "Location", dataIndex: "location", key: "location" },
+    { title: "Location", dataIndex: "address", key: "address" },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: IProfessional) => (
         <Space size="middle">
           {/* View Details Tooltip */}
           <Tooltip placement="right" title="View Details">

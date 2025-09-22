@@ -1,0 +1,75 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Form, Modal } from "antd";
+import ReuseButton from "../Button/ReuseButton";
+import ReusableForm from "../Form/ReuseForm";
+import ReuseInput from "../Form/ReuseInput";
+
+interface DeclineModalProps<T> {
+  isDeclineModalVisible: boolean;
+  handleCancel: () => void;
+  currentRecord: T | null;
+  handleDecline: (data: T, value: any) => void;
+}
+
+const DeclineModal: React.FC<DeclineModalProps<any>> = ({
+  isDeclineModalVisible,
+  handleCancel,
+  currentRecord,
+  handleDecline,
+}) => {
+  const [form] = Form.useForm();
+  //   const [blockUser] = useBlockUserMutation();
+
+  return (
+    <Modal
+      // title="Confirm Delete"
+      open={isDeclineModalVisible}
+      onCancel={handleCancel}
+      okText="Unblock"
+      cancelText="Cancel"
+      centered
+      style={{ textAlign: "center" }}
+      // styles.body={{ textAlign: "center" }}
+      footer={false}
+    >
+      <ReusableForm
+        form={form}
+        handleFinish={(value: any) => handleDecline(currentRecord, value)}
+      >
+        <ReuseInput
+          inputType="textarea"
+          name="reason"
+          label="Reason for Decline"
+          placeholder="Enter reason for decline"
+          rules={[{ required: true, message: "Please input your name!" }]}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingBottom: "40px",
+            marginTop: "30px",
+          }}
+        >
+          <ReuseButton
+            variant="highlight"
+            className="!px-6 !py-5 mr-4 w-fit flex items-center justify-center gap-2"
+            onClick={handleCancel}
+          >
+            Cancel
+          </ReuseButton>
+          <ReuseButton
+            htmlType="submit"
+            variant="secondary"
+            className="!px-6 !py-5 w-fit flex items-center justify-center gap-2 !bg-error !border-error"
+          >
+            Decline
+          </ReuseButton>
+        </div>
+      </ReusableForm>
+    </Modal>
+  );
+};
+
+export default DeclineModal;

@@ -8,6 +8,7 @@ import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import ReusableTabs from "../../ui/ReusableTabs";
 import UserProfessionalTable from "../../ui/Tables/UserProfessionalTable";
 import UserViewPortfolioModal from "../../ui/Modal/User/UserViewPortfolioModal";
+import AdminUsersManagementOverview from "../../Components/Dashboard/AdminUsers/AdminUsersManagementOverview";
 
 const AdminAllUsers = () => {
   const photographerData = Array.from({ length: 20 }).map((_, index) => {
@@ -150,6 +151,10 @@ const AdminAllUsers = () => {
             setPage={setPage}
           />
         </div>
+      </div>
+
+      <div className="flex justify-between items-center mx-3 py-2 mb-5">
+        <AdminUsersManagementOverview />
       </div>
 
       <ReusableTabs<"professional" | "client">
