@@ -8,6 +8,7 @@ import updatePass from "./authImages/updatePass.png";
 // Main Images
 
 import profile from "./dummyProfile.jpg";
+import cover from "./dummyCover.jpg";
 import photo from "./photo.png";
 import product from "./product.jpg";
 
@@ -18,6 +19,7 @@ import bell from "./icons/bell.png";
 export const AllImages = {
   logo,
   profile,
+  cover,
   photo,
   product,
 };

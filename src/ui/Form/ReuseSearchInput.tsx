@@ -39,6 +39,7 @@ const ReuseSearchInput: React.FC<ReuseSearchInputProps> = ({
     <ReuseInput
       name="search"
       type="text"
+      autoComplete="off"
       placeholder={placeholder}
       onChange={handleSearch}
       formItemClassName="!mb-0"

@@ -12,6 +12,7 @@ type TInputProps = {
   rules?: Rule[] | undefined;
   type?: string;
   placeholder: string;
+  autoComplete?: string;
   disabled?: boolean;
   onChange?: (value: any) => void;
   value?: any;
@@ -32,6 +33,7 @@ const ReuseInput = ({
   rules = [],
   type = "text",
   placeholder,
+  autoComplete = "on",
   disabled,
   onChange,
   value,
@@ -67,6 +69,7 @@ const ReuseInput = ({
             )}
             placeholder={placeholder}
             disabled={disabled}
+            autoComplete={autoComplete}
           />
         ) : inputType === "textarea" ? (
           <Input.TextArea
@@ -79,6 +82,7 @@ const ReuseInput = ({
             rows={rows}
             placeholder={placeholder}
             disabled={disabled}
+            autoComplete={autoComplete}
           />
         ) : (
           <Input
@@ -93,6 +97,7 @@ const ReuseInput = ({
             placeholder={placeholder}
             type={type}
             disabled={disabled}
+            autoComplete={autoComplete}
           />
         )}
       </Form.Item>

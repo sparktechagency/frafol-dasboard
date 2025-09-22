@@ -11,9 +11,9 @@ interface AdminGearCategoryTableProps {
   showEditModal: (record: any) => void; // Function to handle viewing a user
   showDeleteModal: (record: any) => void; // Function to handle viewing a user
   setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const AdminGearCategoryTable: React.FC<AdminGearCategoryTableProps> = ({
@@ -31,6 +31,8 @@ const AdminGearCategoryTable: React.FC<AdminGearCategoryTableProps> = ({
       title: "UID",
       dataIndex: "id",
       key: "id",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
     },
 
     {
@@ -55,7 +57,7 @@ const AdminGearCategoryTable: React.FC<AdminGearCategoryTableProps> = ({
           </Tooltip>
           <Tooltip placement="right" title="Delete">
             <button
-              className="!p-0 !bg-transparent !border-none !text-base-color cursor-pointer"
+              className="!p-0 !bg-transparent !border-none !text-error cursor-pointer"
               onClick={() => showDeleteModal(record)}
             >
               <MdDelete style={{ fontSize: "24px" }} />

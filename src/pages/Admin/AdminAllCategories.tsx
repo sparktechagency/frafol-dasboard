@@ -3,46 +3,51 @@ import { useState } from "react";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import DeleteModal from "../../ui/Modal/DeleteModal";
 import ReuseButton from "../../ui/Button/ReuseButton";
-import { AllImages } from "../../../public/images/AllImages";
+// import { AllImages } from "../../../public/images/AllImages";
 import ReusableTabs from "../../ui/ReusableTabs";
 import AdminPhotoCategoryTable from "../../ui/Tables/Category/AdminPhotoCategoryTable";
 import AdminVideoCategoryTable from "../../ui/Tables/Category/AdminVideoCategoryModal";
 import AdminGearCategoryTable from "../../ui/Tables/Category/AdminGearCategoryTable";
 import AdminAddCategories from "../../ui/Modal/Categories/AdminAddCategories";
 import AdminEditCategories from "../../ui/Modal/Categories/AdminEditCategories";
+import {
+  useDeleteCategoryMutation,
+  useGetCategoryQuery,
+} from "../../redux/features/category/categoryApi";
+import { Form } from "antd";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 const AdminAllCategories = () => {
-  const phtographyData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      image: AllImages?.photo,
-      title: `Wedding Photography`,
-      subTitle: "Capture your special day",
-    };
-  });
-  const videographyData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      image: AllImages?.photo,
-      title: `Wedding Videography`,
-      subTitle: "Capture your special day",
-    };
-  });
-  const gearData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      title: `Camera`,
-    };
-  });
+  const [form] = Form.useForm();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const [activeTab, setActiveTab] = useState<
-    "photography" | "videography" | "gear"
-  >("photography");
+    "photoGraphy" | "videoGraphy" | "gear"
+  >("photoGraphy");
 
-  const limit = 12;
+  const limit = 10;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
+
+  const { data, isFetching } = useGetCategoryQuery(
+    {
+      path: activeTab,
+    },
+    {
+      refetchOnMountOrArgChange:
+        activeTab === "photoGraphy" ||
+        activeTab === "videoGraphy" ||
+        activeTab === "gear"
+          ? true
+          : false,
+    }
+  );
+
+  const categoryData = data?.data;
+
+  const filteredData = categoryData?.filter((item: any) => {
+    return item?.title?.toLowerCase().includes(searchText.toLowerCase());
+  });
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
@@ -71,19 +76,29 @@ const AdminAllCategories = () => {
     setIsAddModalVisible(false);
   };
 
+  const handleDelete = async (data: any) => {
+    const response = await tryCatchWrapper(deleteCategory, {
+      params: { id: data?._id },
+    });
+
+    if (response?.statusCode === 200) {
+      handleCancel();
+    }
+  };
+
   return (
     <div className=" bg-primary-color rounded-xl p-4 min-h-[90vh]">
       <div className="flex justify-between items-center mx-3 py-2 mb-5">
         <p className="text-xl sm:text-2xl lg:text-3xl text-base-color font-bold ">
           Categories
         </p>
-        <div className="h-fit">
+        <Form form={form} className="h-fit">
           <ReuseSearchInput
             placeholder="Search ..."
             setSearch={setSearchText}
             setPage={setPage}
           />
-        </div>
+        </Form>
       </div>
       <div className="flex justify-end mb-5 !w-fit ml-auto">
         <ReuseButton
@@ -94,37 +109,37 @@ const AdminAllCategories = () => {
           Add Category
         </ReuseButton>
       </div>
-      <ReusableTabs<"photography" | "videography" | "gear">
+      <ReusableTabs<"photoGraphy" | "videoGraphy" | "gear">
         align="left"
         tabs={[
           {
             label: "Photography",
-            value: "photography",
+            value: "photoGraphy",
             content: (
               <AdminPhotoCategoryTable
-                data={phtographyData}
-                loading={false}
+                data={filteredData}
+                loading={isFetching}
                 showEditModal={showEditModal}
                 showDeleteModal={showDeleteModal}
                 setPage={setPage}
                 page={page}
-                total={phtographyData.length}
+                total={filteredData?.length}
                 limit={limit}
               />
             ),
           },
           {
             label: "Videography",
-            value: "videography",
+            value: "videoGraphy",
             content: (
               <AdminVideoCategoryTable
-                data={videographyData}
-                loading={false}
+                data={filteredData}
+                loading={isFetching}
                 showEditModal={showEditModal}
                 showDeleteModal={showDeleteModal}
                 setPage={setPage}
                 page={page}
-                total={videographyData.length}
+                total={filteredData?.length}
                 limit={limit}
               />
             ),
@@ -134,13 +149,13 @@ const AdminAllCategories = () => {
             value: "gear",
             content: (
               <AdminGearCategoryTable
-                data={gearData}
-                loading={false}
+                data={filteredData}
+                loading={isFetching}
                 showEditModal={showEditModal}
                 showDeleteModal={showDeleteModal}
                 setPage={setPage}
                 page={page}
-                total={gearData.length}
+                total={filteredData?.length}
                 limit={limit}
               />
             ),
@@ -149,6 +164,8 @@ const AdminAllCategories = () => {
         activeTab={activeTab}
         onTabChange={(tab) => {
           setActiveTab(tab);
+          setSearchText("");
+          form.resetFields();
           setPage(1); // Reset page when changing tabs
         }}
       />
@@ -167,11 +184,7 @@ const AdminAllCategories = () => {
       <DeleteModal
         isDeleteModalVisible={isDeleteModalVisible}
         handleCancel={handleCancel}
-        handleDelete={(record) => {
-          console.log("Delete record:", record);
-          setIsDeleteModalVisible(false);
-          setCurrentRecord(null);
-        }}
+        handleDelete={() => handleDelete(currentRecord)}
         currentRecord={currentRecord}
       />
     </div>

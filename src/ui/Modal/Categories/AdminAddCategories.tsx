@@ -4,10 +4,12 @@ import ReusableForm from "../../Form/ReuseForm";
 import ReuseInput from "../../Form/ReuseInput";
 import ReuseUpload from "../../Form/ReuseUpload";
 import ReuseButton from "../../Button/ReuseButton";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { useAddCategoryMutation } from "../../../redux/features/category/categoryApi";
 interface AdminAddCategoriesProps {
   isAddModalVisible: boolean;
   handleCancel: () => void;
-  activeTab: "photography" | "videography" | "gear";
+  activeTab: "photoGraphy" | "videoGraphy" | "gear";
 }
 
 const AdminAddCategories: React.FC<AdminAddCategoriesProps> = ({
@@ -17,8 +19,33 @@ const AdminAddCategories: React.FC<AdminAddCategoriesProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const onSubmit = (values: any) => {
-    console.log(values);
+  const [addCategory] = useAddCategoryMutation();
+
+  const onSubmit = async (values: any) => {
+    const formData = new FormData();
+
+    if (values?.image?.[0]?.originFileObj) {
+      formData.append("image", values?.image?.[0]?.originFileObj);
+    }
+    const data = {
+      title: values?.title,
+      subTitle: values?.subTitle,
+      type: activeTab,
+    };
+
+    formData.append("data", JSON.stringify(data));
+    const res = await tryCatchWrapper(
+      addCategory,
+      { body: formData },
+      "Adding Category..."
+    );
+
+    console.log(res);
+
+    if (res?.statusCode === 201) {
+      form.resetFields();
+      handleCancel();
+    }
   };
   return (
     <Modal
@@ -40,7 +67,7 @@ const AdminAddCategories: React.FC<AdminAddCategoriesProps> = ({
             rules={[{ required: true, message: "Titles is required" }]}
             labelClassName="!font-semibold"
           />
-          {activeTab === "photography" ? (
+          {activeTab === "photoGraphy" ? (
             <div>
               <ReuseInput
                 name="subTitle"
@@ -58,7 +85,7 @@ const AdminAddCategories: React.FC<AdminAddCategoriesProps> = ({
                 labelClassName="!font-semibold"
               />
             </div>
-          ) : activeTab === "videography" ? (
+          ) : activeTab === "videoGraphy" ? (
             <div>
               <ReuseInput
                 name="subTitle"
