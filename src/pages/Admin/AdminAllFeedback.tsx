@@ -1,27 +1,32 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
-import ReportsTable from "../../ui/Tables/ReportsTable";
-import AdminViewReviewModal from "../../ui/Modal/Review/AdminViewReviewModal";
+import { useGetFeedbackQuery } from "../../redux/features/feedback/feedbackApi";
+import { IFeedback } from "../../types";
+import FeedbackTable from "../../ui/Tables/FeedbackTable";
+import AdminViewFeedbackModal from "../../ui/Modal/Feadback/AdminViewFeedbackModal";
 
 const AdminAllFeedback = () => {
-  const allReportsData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      name: "Lívia Nováková",
-      role: "Photographer",
-      issue: `The upload speed is painfully slow, making it impossible...`,
-      date: new Date().toLocaleDateString(),
-    };
-  });
-  const limit = 12;
+  const limit = 10;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
-  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
 
-  const showViewUserModal = (record: any) => {
+  const { data, isFetching } = useGetFeedbackQuery(
+    {
+      limit,
+      page,
+      searchTerm: searchText,
+    },
+    { refetchOnMountOrArgChange: true }
+  );
+
+  const allFeedback: IFeedback[] = data?.data?.result || [];
+
+  const total = data?.data?.meta?.total || 0;
+
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<IFeedback | null>(null);
+
+  const showViewUserModal = (record: IFeedback) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
@@ -33,9 +38,9 @@ const AdminAllFeedback = () => {
 
   return (
     <div className=" bg-primary-color rounded-xl p-4 min-h-[90vh]">
-      <div className="flex justify-between items-center mx-3 py-2 mb-5">
-        <p className="text-xl sm:text-2xl lg:text-3xl text-base-color font-bold ">
-          Reports
+      <div className="flex justify-between items-center py-2 mb-5">
+        <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-base-color font-extrabold ">
+          Feedback
         </p>
         <div className="h-fit">
           <ReuseSearchInput
@@ -45,16 +50,16 @@ const AdminAllFeedback = () => {
           />
         </div>
       </div>
-      <ReportsTable
-        data={allReportsData}
-        loading={false}
+      <FeedbackTable
+        data={allFeedback}
+        loading={isFetching}
         showViewModal={showViewUserModal}
         setPage={setPage}
         page={page}
-        total={allReportsData.length}
+        total={total}
         limit={limit}
       />
-      <AdminViewReviewModal
+      <AdminViewFeedbackModal
         isViewModalVisible={isViewModalVisible}
         handleCancel={handleCancel}
         currentRecord={currentRecord}
