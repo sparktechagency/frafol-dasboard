@@ -1,18 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Space, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import ReuseTable from "../../../utils/ReuseTable";
+import { IGear } from "../../../types";
+import { AllImages } from "../../../../public/images/AllImages";
+import { getImageUrl } from "../../../helpers/config/envConfig";
 
 // Define the type for the props
 interface GearApprovalsTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IGear[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewUserModal: (record: any) => void; // Function to handle viewing a user
+  showViewUserModal: (record: IGear) => void; // Function to handle viewing a user
   setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
@@ -24,26 +26,81 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
   total,
   limit,
 }) => {
+  const serverUrl = getImageUrl();
   const columns = [
     {
-      title: "UID",
-      dataIndex: "id",
-      key: "id",
+      title: "ID",
+      dataIndex: "_id",
+      key: "_id",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
     },
-    { title: "Seller Name", dataIndex: "sellername", key: "sellername" },
-    { title: "Product Name", dataIndex: "productName", key: "productName" },
-    { title: "Category", dataIndex: "category", key: "category" },
-    { title: "Condition", dataIndex: "condition", key: "condition" },
     {
-      title: "Shipping Company",
-      dataIndex: "shippingCompany",
-      key: "shippingCompany",
+      title: "Item Image",
+      dataIndex: "gallery",
+      key: "gallery",
+      render: (text: string[]) => (
+        <img
+          src={text?.[0] ? serverUrl + text[0] : AllImages.cover}
+          alt="Item"
+          width={50}
+          height={50}
+          className="rounded w-10 h-10 object-cover"
+        />
+      ),
     },
-    { title: "Price", dataIndex: "price", key: "price" },
+    {
+      title: "Item Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Item Category",
+      dataIndex: ["categoryId", "title"],
+      key: "categoryId",
+    },
+    {
+      title: "Seller Name",
+      dataIndex: ["authorId", "name"],
+      key: "authorId",
+    },
+    {
+      title: "Seller Role",
+      dataIndex: ["authorId", "role"],
+      key: "authorId",
+      render: (_: unknown, record: IGear) => (
+        <p className="capitalize">
+          {record?.authorId?.role === "both"
+            ? "Photographer & Videographer"
+            : record?.authorId?.role}
+        </p>
+      ),
+    },
+    {
+      title: "Item Price (€)",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Condition",
+      dataIndex: "condition",
+      key: "condition",
+      render: (text: string) => <span className="capitalize">{text}</span>,
+    },
+    {
+      title: "Shipping Info",
+      dataIndex: ["shippingCompany", "name"],
+      key: "shippingCompany",
+      render: (_: unknown, record: IGear) => (
+        <span className="capitalize">
+          {record.shippingCompany.name} - {record.shippingCompany.price}€
+        </span>
+      ),
+    },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: IGear) => (
         <Space size="middle">
           {/* View Details Tooltip */}
           <Tooltip placement="right" title="View Details">
@@ -69,7 +126,7 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
       total={total}
       limit={limit}
       page={page}
-      keyValue={"email"}
+      keyValue={"_id"}
     />
   );
 };

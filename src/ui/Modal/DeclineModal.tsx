@@ -28,10 +28,13 @@ const DeclineModal: React.FC<DeclineModalProps<any>> = ({
       okText="Unblock"
       cancelText="Cancel"
       centered
-      style={{ textAlign: "center" }}
       // styles.body={{ textAlign: "center" }}
       footer={false}
     >
+      <h3 className="!text-2xl my-5 text-center !font-bold !text-secondary-color">
+        Are you sure you want to Decline?
+      </h3>
+
       <ReusableForm
         form={form}
         handleFinish={(value: any) => handleDecline(currentRecord, value)}
@@ -39,6 +42,7 @@ const DeclineModal: React.FC<DeclineModalProps<any>> = ({
         <ReuseInput
           inputType="textarea"
           name="reason"
+          labelClassName="!font-bold !text-base-color"
           label="Reason for Decline"
           placeholder="Enter reason for decline"
           rules={[{ required: true, message: "Please input your name!" }]}
@@ -48,7 +52,6 @@ const DeclineModal: React.FC<DeclineModalProps<any>> = ({
           style={{
             display: "flex",
             justifyContent: "center",
-            paddingBottom: "40px",
             marginTop: "30px",
           }}
         >

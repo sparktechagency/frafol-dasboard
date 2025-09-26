@@ -1,6 +1,7 @@
 export const tagTypes = {
   auth: "Auth",
   users: "Users",
+  gear: "Gear",
   category: "Category",
   commissionSetup: "CommissionSetup",
   feedback: "Feedback",
@@ -11,6 +12,7 @@ export const tagTypes = {
 export const tagTypesList = [
   tagTypes.auth,
   tagTypes.users,
+  tagTypes.gear,
   tagTypes.category,
   tagTypes.commissionSetup,
   tagTypes.feedback,

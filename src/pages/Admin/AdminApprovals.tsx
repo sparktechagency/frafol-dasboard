@@ -12,10 +12,15 @@ import {
   useDeclineProfessionalMutation,
   useGetAllPendingProfessionalsQuery,
 } from "../../redux/features/users/usersApi";
-import { IProfessional } from "../../types";
+import { IGear, IProfessional } from "../../types";
 import ApprovalModal from "../../ui/Modal/ApprovalModal";
 import DeclineModal from "../../ui/Modal/DeclineModal";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
+import {
+  useGetAllPendingGearQuery,
+  useUpdateGearApprovalStatusMutation,
+} from "../../redux/features/gear/gearApi";
+import { Form } from "antd";
 const AdminApprovals = () => {
   const packageData = Array.from({ length: 20 }).map((_, index) => {
     return {
@@ -26,17 +31,6 @@ const AdminApprovals = () => {
       deliveryTime: `3 days`,
       duration: `3 hours`,
       category: "Wedding Photography",
-    };
-  });
-  const gearData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      sellername: "Lívia Nováková",
-      productName: "Nikon DSLR Camera ",
-      category: "Camera",
-      condition: "New",
-      shippingCompany: "FedEx",
-      price: "$5000",
     };
   });
   const workshopData = Array.from({ length: 20 }).map((_, index) => {
@@ -51,17 +45,17 @@ const AdminApprovals = () => {
       participants: "20",
     };
   });
-
-  const [approveProfessional] = useApproveProfessionalMutation();
-  const [declineProfessional] = useDeclineProfessionalMutation();
-
-  const [activeTab, setActiveTab] = useState<
-    "professionals" | "packages" | "gear" | "workshop"
-  >("professionals");
-
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
+  const [activeTab, setActiveTab] = useState<
+    "professionals" | "packages" | "gear" | "workshop"
+  >("professionals");
+  const [form] = Form.useForm();
+
+  const [approveProfessional] = useApproveProfessionalMutation();
+  const [declineProfessional] = useDeclineProfessionalMutation();
+  const [updateGearApproval] = useUpdateGearApprovalStatusMutation();
 
   const { data: professional, isFetching: professionalFetching } =
     useGetAllPendingProfessionalsQuery(
@@ -76,25 +70,37 @@ const AdminApprovals = () => {
   const allProfessionals: IProfessional[] = professional?.data || [];
   const totalProfessionals: number = professional?.meta?.total || 0;
 
+  const { data: gear, isFetching: gearFetching } = useGetAllPendingGearQuery(
+    {
+      page,
+      limit,
+      searchTerm: searchText,
+    },
+    { skip: activeTab !== "gear", refetchOnMountOrArgChange: true }
+  );
+
+  const allGear: IGear[] = gear?.data || [];
+  const totalGear: number = gear?.meta?.total || 0;
+
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
   const [isDeclineModalVisible, setIsDeclineModalVisible] = useState(false);
 
-  const [currentRecord, setCurrentRecord] = useState<IProfessional | null>(
-    null
-  );
+  const [currentRecord, setCurrentRecord] = useState<
+    IProfessional | IGear | null
+  >(null);
 
-  const showApproveModal = (record: IProfessional) => {
+  const showApproveModal = (record: IProfessional | IGear) => {
     setCurrentRecord(record);
     setIsApproveModalVisible(true);
   };
 
-  const showDeclineModal = (record: IProfessional) => {
+  const showDeclineModal = (record: IProfessional | IGear) => {
     setCurrentRecord(record);
     setIsDeclineModalVisible(true);
   };
 
-  const showViewUserModal = (record: IProfessional) => {
+  const showViewUserModal = (record: IProfessional | IGear) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
@@ -106,30 +112,59 @@ const AdminApprovals = () => {
     setCurrentRecord(null);
   };
 
-  const handleApprove = async (record: IProfessional | null) => {
-    const res = await tryCatchWrapper(
-      approveProfessional,
-      {
-        params: record?._id,
-      },
-      "Approving..."
-    );
+  const handleApprove = async (record: IProfessional | IGear | null) => {
+    if (activeTab === "professionals") {
+      const res = await tryCatchWrapper(
+        approveProfessional,
+        {
+          params: record?._id,
+        },
+        "Approving..."
+      );
 
-    if (res?.statusCode === 200) {
-      handleCancel();
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
+    } else if (activeTab === "gear") {
+      const res = await tryCatchWrapper(
+        updateGearApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "approved" },
+        },
+        "Approving..."
+      );
+
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
     }
   };
   const handleDecline = async (record: IProfessional | null, value: any) => {
-    const res = await tryCatchWrapper(
-      declineProfessional,
-      {
-        params: record?._id,
-        body: value,
-      },
-      "Declining..."
-    );
-    if (res?.statusCode === 200) {
-      handleCancel();
+    if (activeTab === "professionals") {
+      const res = await tryCatchWrapper(
+        declineProfessional,
+        {
+          params: record?._id,
+          body: value,
+        },
+        "Declining..."
+      );
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
+    } else if (activeTab === "gear") {
+      const res = await tryCatchWrapper(
+        updateGearApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "cancelled", ...value },
+        },
+        "Declining..."
+      );
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
     }
   };
 
@@ -139,13 +174,13 @@ const AdminApprovals = () => {
         <p className="text-xl sm:text-2xl lg:text-3xl text-base-color font-bold ">
           Approvals
         </p>
-        <div className="h-fit">
+        <Form form={form} className="h-fit">
           <ReuseSearchInput
             placeholder="Search ..."
             setSearch={setSearchText}
             setPage={setPage}
           />
-        </div>
+        </Form>
       </div>
 
       <ReusableTabs<"professionals" | "packages" | "gear" | "workshop">
@@ -186,12 +221,12 @@ const AdminApprovals = () => {
             value: "gear",
             content: (
               <GearApprovalsTable
-                data={gearData}
-                loading={false}
+                data={allGear}
+                loading={gearFetching}
                 showViewUserModal={showViewUserModal}
                 setPage={setPage}
                 page={page}
-                total={gearData.length}
+                total={totalGear}
                 limit={limit}
               />
             ),
@@ -215,8 +250,9 @@ const AdminApprovals = () => {
         activeTab={activeTab}
         onTabChange={(tab) => {
           setActiveTab(tab);
-          setPage(1); // Reset page when changing tabs
-          setSearchText(""); // Reset search when changing tabs
+          setPage(1);
+          setSearchText("");
+          form.resetFields();
         }}
       />
       <ApprovalsViewModal

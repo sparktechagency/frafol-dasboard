@@ -1,75 +1,119 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import ReuseTable from "../../utils/ReuseTable";
-import { Tooltip } from "antd";
+import { Space, Tooltip } from "antd";
 import { MdDelete } from "react-icons/md";
+import { GoEye } from "react-icons/go";
+import { AllImages } from "../../../public/images/AllImages";
+import { getImageUrl } from "../../helpers/config/envConfig";
+import { IGear } from "../../types";
 
 // Define the type for the props
 interface AdminGearMarketplaceTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IGear[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showDeleteModal: (record: any) => void; // Function to handle viewing payment details
+  showViewModal: (record: IGear) => void; // Function to handle viewing a user
+  showDeleteModal: (record: IGear) => void; // Function to handle viewing payment details
   setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const AdminGearMarketplaceTable: React.FC<AdminGearMarketplaceTableProps> = ({
   data,
   loading,
   setPage,
+  showViewModal,
   showDeleteModal,
   page,
   total,
   limit,
 }) => {
+  const serverUrl = getImageUrl();
   const columns = [
     {
-      title: "Order ID",
-      dataIndex: "orderId",
-      key: "orderId",
+      title: "ID",
+      dataIndex: "_id",
+      key: "_id",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
+    },
+    {
+      title: "Item Image",
+      dataIndex: "gallery",
+      key: "gallery",
+      render: (text: string[]) => (
+        <img
+          src={text?.[0] ? serverUrl + text?.[0] : AllImages.cover}
+          alt="Item"
+          width={50}
+          height={50}
+          className="rounded w-10 h-10 object-cover"
+        />
+      ),
+    },
+    {
+      title: "Item Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Item Category",
+      dataIndex: ["categoryId", "title"],
+      key: "categoryId",
     },
     {
       title: "Seller Name",
-      dataIndex: "sellerName",
-      key: "sellerName",
+      dataIndex: ["authorId", "name"],
+      key: "authorId",
     },
     {
-      title: "Product",
-      dataIndex: "product",
-      key: "product",
+      title: "Seller Role",
+      dataIndex: ["authorId", "role"],
+      key: "authorId",
+      render: (_: unknown, record: IGear) => (
+        <p className="capitalize">
+          {record?.authorId?.role === "both"
+            ? "Photographer & Videographer"
+            : record?.authorId?.role}
+        </p>
+      ),
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
+      title: "Item Price (€)",
+      dataIndex: "price",
+      key: "price",
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
+      title: "Condition",
+      dataIndex: "condition",
+      key: "condition",
+      render: (text: string) => <span className="capitalize">{text}</span>,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text: string) => (
-        <span style={{ color: text === "In Stock" ? "green" : "red" }}>
-          {text}
+      title: "Shipping Info",
+      dataIndex: ["shippingCompany", "name"],
+      key: "shippingCompany",
+      render: (_: unknown, record: IGear) => (
+        <span className="capitalize">
+          {record?.shippingCompany?.name} - €{record?.shippingCompany?.price}
         </span>
       ),
     },
     {
-      title: "Preferred Shipping",
-      dataIndex: "preferredShipping",
-      key: "preferredShipping",
-    },
-    {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
-        <div>
+      render: (_: unknown, record: IGear) => (
+        <Space size="middle">
+          {" "}
+          <Tooltip placement="right" title="View Details">
+            <button
+              className="!p-0 !bg-transparent !border-none cursor-pointer"
+              onClick={() => showViewModal(record)}
+            >
+              <GoEye style={{ fontSize: "24px" }} />
+            </button>
+          </Tooltip>
           <Tooltip placement="right" title="Delete">
             <button
               className="!p-0 !bg-transparent !border-none !text-error-color"
@@ -81,8 +125,9 @@ const AdminGearMarketplaceTable: React.FC<AdminGearMarketplaceTableProps> = ({
               />
             </button>
           </Tooltip>
-        </div>
+        </Space>
       ),
+      align: "center",
     },
   ];
 
