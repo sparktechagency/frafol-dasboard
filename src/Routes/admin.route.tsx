@@ -34,6 +34,7 @@ import AdminAllCategories from "../pages/Admin/AdminAllCategories";
 import AdminOrderManagement from "../pages/Admin/AdminOrderManagement";
 import AdminAllUsers from "../pages/Admin/AdminAllUsers";
 import AdminApprovals from "../pages/Admin/AdminApprovals";
+import AdminPackageManagement from "../pages/Admin/AdminPackageManagement";
 
 export const adminPaths = [
   {
@@ -49,6 +50,13 @@ export const adminPaths = [
     key: "users-management",
     name: "Users Management",
     icon: userLogo,
+  },
+  {
+    path: "approvals",
+    element: <AdminApprovals />,
+    key: "approvals",
+    name: "Approvals",
+    icon: approvalsLogo,
   },
   {
     path: "order-management",
@@ -73,18 +81,18 @@ export const adminPaths = [
     icon: gearLogo,
   },
   {
+    path: "package-management",
+    element: <AdminPackageManagement />,
+    key: "package-management",
+    name: "Package Management",
+    icon: workshopLogo,
+  },
+  {
     path: "workshop-management",
     element: <AdminWorkshopManagement />,
     key: "workshop-management",
     name: "Workshop Management",
     icon: workshopLogo,
-  },
-  {
-    path: "approvals",
-    element: <AdminApprovals />,
-    key: "approvals",
-    name: "Approvals",
-    icon: approvalsLogo,
   },
   {
     path: "earning",

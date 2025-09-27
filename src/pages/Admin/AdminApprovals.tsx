@@ -12,7 +12,7 @@ import {
   useDeclineProfessionalMutation,
   useGetAllPendingProfessionalsQuery,
 } from "../../redux/features/users/usersApi";
-import { IGear, IProfessional } from "../../types";
+import { IGear, IPackage, IProfessional } from "../../types";
 import ApprovalModal from "../../ui/Modal/ApprovalModal";
 import DeclineModal from "../../ui/Modal/DeclineModal";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
@@ -21,18 +21,11 @@ import {
   useUpdateGearApprovalStatusMutation,
 } from "../../redux/features/gear/gearApi";
 import { Form } from "antd";
+import {
+  useGetAllPendingPackageQuery,
+  useUpdatePackageApprovalStatusMutation,
+} from "../../redux/features/package/packageApi";
 const AdminApprovals = () => {
-  const packageData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      photographerVideographer: `Jhon Doe`,
-      packageTitle: `Wedding Videography`,
-      price: `$5000`,
-      deliveryTime: `3 days`,
-      duration: `3 hours`,
-      category: "Wedding Photography",
-    };
-  });
   const workshopData = Array.from({ length: 20 }).map((_, index) => {
     return {
       id: index + 1,
@@ -56,6 +49,7 @@ const AdminApprovals = () => {
   const [approveProfessional] = useApproveProfessionalMutation();
   const [declineProfessional] = useDeclineProfessionalMutation();
   const [updateGearApproval] = useUpdateGearApprovalStatusMutation();
+  const [updatePackageApproval] = useUpdatePackageApprovalStatusMutation();
 
   const { data: professional, isFetching: professionalFetching } =
     useGetAllPendingProfessionalsQuery(
@@ -69,6 +63,19 @@ const AdminApprovals = () => {
 
   const allProfessionals: IProfessional[] = professional?.data || [];
   const totalProfessionals: number = professional?.meta?.total || 0;
+
+  const { data: packages, isFetching: packageFetching } =
+    useGetAllPendingPackageQuery(
+      {
+        page,
+        limit,
+        searchTerm: searchText,
+      },
+      { skip: activeTab !== "packages", refetchOnMountOrArgChange: true }
+    );
+
+  const allpackage: IPackage[] = packages?.data?.result || [];
+  const totalPackage: number = packages?.data?.meta?.total || 0;
 
   const { data: gear, isFetching: gearFetching } = useGetAllPendingGearQuery(
     {
@@ -87,20 +94,20 @@ const AdminApprovals = () => {
   const [isDeclineModalVisible, setIsDeclineModalVisible] = useState(false);
 
   const [currentRecord, setCurrentRecord] = useState<
-    IProfessional | IGear | null
+    IProfessional | IPackage | IGear | null
   >(null);
 
-  const showApproveModal = (record: IProfessional | IGear) => {
+  const showApproveModal = (record: IProfessional | IPackage | IGear) => {
     setCurrentRecord(record);
     setIsApproveModalVisible(true);
   };
 
-  const showDeclineModal = (record: IProfessional | IGear) => {
+  const showDeclineModal = (record: IProfessional | IPackage | IGear) => {
     setCurrentRecord(record);
     setIsDeclineModalVisible(true);
   };
 
-  const showViewUserModal = (record: IProfessional | IGear) => {
+  const showViewUserModal = (record: IProfessional | IPackage | IGear) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
@@ -112,12 +119,27 @@ const AdminApprovals = () => {
     setCurrentRecord(null);
   };
 
-  const handleApprove = async (record: IProfessional | IGear | null) => {
+  const handleApprove = async (
+    record: IProfessional | IPackage | IGear | null
+  ) => {
     if (activeTab === "professionals") {
       const res = await tryCatchWrapper(
         approveProfessional,
         {
           params: record?._id,
+        },
+        "Approving..."
+      );
+
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
+    } else if (activeTab === "packages") {
+      const res = await tryCatchWrapper(
+        updatePackageApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "approved" },
         },
         "Approving..."
       );
@@ -147,6 +169,18 @@ const AdminApprovals = () => {
         {
           params: record?._id,
           body: value,
+        },
+        "Declining..."
+      );
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
+    } else if (activeTab === "packages") {
+      const res = await tryCatchWrapper(
+        updatePackageApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "cancelled", ...value },
         },
         "Declining..."
       );
@@ -206,12 +240,12 @@ const AdminApprovals = () => {
             value: "packages",
             content: (
               <PackagesApprovalsTable
-                data={packageData}
-                loading={false}
+                data={allpackage}
+                loading={packageFetching}
                 showViewUserModal={showViewUserModal}
                 setPage={setPage}
                 page={page}
-                total={packageData.length}
+                total={totalPackage}
                 limit={limit}
               />
             ),
