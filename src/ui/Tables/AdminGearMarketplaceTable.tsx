@@ -52,6 +52,7 @@ const AdminGearMarketplaceTable: React.FC<AdminGearMarketplaceTableProps> = ({
         />
       ),
     },
+
     {
       title: "Item Name",
       dataIndex: "name",
@@ -84,6 +85,8 @@ const AdminGearMarketplaceTable: React.FC<AdminGearMarketplaceTableProps> = ({
       dataIndex: "price",
       key: "price",
     },
+    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
+
     {
       title: "Condition",
       dataIndex: "condition",
