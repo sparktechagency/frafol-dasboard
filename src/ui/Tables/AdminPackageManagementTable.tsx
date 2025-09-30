@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import ReuseTable from "../../utils/ReuseTable";
 import { Space, Tooltip } from "antd";

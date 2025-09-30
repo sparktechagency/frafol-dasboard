@@ -3,3 +3,4 @@ export * from "./approvals.type";
 export * from "./feedback.type";
 export * from "./gear.type";
 export * from "./package.type";
+export * from "./workshop.type";

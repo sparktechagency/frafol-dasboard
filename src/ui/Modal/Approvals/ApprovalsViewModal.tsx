@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Modal } from "antd";
-import { IGear, IPackage, IProfessional } from "../../../types";
+import { IGear, IPackage, IProfessional, IWorkshop } from "../../../types";
 import ViewWorkshop from "./ViewWorkshop";
 import ViewGear from "./ViewGear";
 import ViewProfessional from "./ViewProfessional";
@@ -14,7 +14,7 @@ interface ApprovalsViewModalProps {
   showApproveModal: (record: any) => void;
   showDeclineModal: (record: any) => void;
   handleCancel: () => void;
-  currentRecord: IProfessional | IPackage | IGear | null;
+  currentRecord: IProfessional | IPackage | IGear | IWorkshop | null;
   activeTab: string;
 }
 
@@ -53,7 +53,11 @@ const ApprovalsViewModal: React.FC<ApprovalsViewModalProps> = ({
           currentRecord={currentRecord as IGear}
         />
       ) : (
-        <ViewWorkshop />
+        <ViewWorkshop
+          showApproveModal={showApproveModal}
+          showDeclineModal={showDeclineModal}
+          currentRecord={currentRecord as IWorkshop}
+        />
       )}
     </Modal>
   );

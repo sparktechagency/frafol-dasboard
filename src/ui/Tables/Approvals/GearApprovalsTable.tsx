@@ -81,6 +81,8 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
       dataIndex: "price",
       key: "price",
     },
+    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
+
     {
       title: "Condition",
       dataIndex: "condition",

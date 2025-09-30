@@ -12,7 +12,7 @@ import {
   useDeclineProfessionalMutation,
   useGetAllPendingProfessionalsQuery,
 } from "../../redux/features/users/usersApi";
-import { IGear, IPackage, IProfessional } from "../../types";
+import { IGear, IPackage, IProfessional, IWorkshop } from "../../types";
 import ApprovalModal from "../../ui/Modal/ApprovalModal";
 import DeclineModal from "../../ui/Modal/DeclineModal";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
@@ -25,19 +25,11 @@ import {
   useGetAllPendingPackageQuery,
   useUpdatePackageApprovalStatusMutation,
 } from "../../redux/features/package/packageApi";
+import {
+  useGetAllPendingWorkshopQuery,
+  useUpdateWorkshopApprovalStatusMutation,
+} from "../../redux/features/workshop/workshopApi";
 const AdminApprovals = () => {
-  const workshopData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      title: "Photography for Beginners",
-      hostName: "Lívia Nováková",
-      date: "03/03/2023",
-      locationType: "Offline",
-      location: "Marek Novák",
-      status: "Completed",
-      participants: "20",
-    };
-  });
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
@@ -50,6 +42,7 @@ const AdminApprovals = () => {
   const [declineProfessional] = useDeclineProfessionalMutation();
   const [updateGearApproval] = useUpdateGearApprovalStatusMutation();
   const [updatePackageApproval] = useUpdatePackageApprovalStatusMutation();
+  const [updateWorkshopApproval] = useUpdateWorkshopApprovalStatusMutation();
 
   const { data: professional, isFetching: professionalFetching } =
     useGetAllPendingProfessionalsQuery(
@@ -88,6 +81,19 @@ const AdminApprovals = () => {
 
   const allGear: IGear[] = gear?.data || [];
   const totalGear: number = gear?.meta?.total || 0;
+
+  const { data: workshop, isFetching: workshopFetching } =
+    useGetAllPendingWorkshopQuery(
+      {
+        page,
+        limit,
+        searchTerm: searchText,
+      },
+      { skip: activeTab !== "workshop", refetchOnMountOrArgChange: true }
+    );
+
+  const allWorkshop: IWorkshop[] = workshop?.data?.result || [];
+  const totalWorkshop: number = workshop?.meta?.total || 0;
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
@@ -160,6 +166,19 @@ const AdminApprovals = () => {
       if (res?.statusCode === 200) {
         handleCancel();
       }
+    } else if (activeTab === "workshop") {
+      const res = await tryCatchWrapper(
+        updateWorkshopApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "approved" },
+        },
+        "Approving..."
+      );
+
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
     }
   };
   const handleDecline = async (record: IProfessional | null, value: any) => {
@@ -190,6 +209,18 @@ const AdminApprovals = () => {
     } else if (activeTab === "gear") {
       const res = await tryCatchWrapper(
         updateGearApproval,
+        {
+          params: record?._id,
+          body: { approvalStatus: "cancelled", ...value },
+        },
+        "Declining..."
+      );
+      if (res?.statusCode === 200) {
+        handleCancel();
+      }
+    } else if (activeTab === "workshop") {
+      const res = await tryCatchWrapper(
+        updateWorkshopApproval,
         {
           params: record?._id,
           body: { approvalStatus: "cancelled", ...value },
@@ -270,12 +301,12 @@ const AdminApprovals = () => {
             value: "workshop",
             content: (
               <WorkshopApprovalsTable
-                data={workshopData}
-                loading={false}
+                data={allWorkshop}
+                loading={workshopFetching}
                 showViewUserModal={showViewUserModal}
                 setPage={setPage}
                 page={page}
-                total={workshopData.length}
+                total={totalWorkshop}
                 limit={limit}
               />
             ),

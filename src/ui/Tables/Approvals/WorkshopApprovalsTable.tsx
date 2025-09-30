@@ -3,6 +3,9 @@ import React from "react";
 import { Space, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import ReuseTable from "../../../utils/ReuseTable";
+import { formatDate, formetTime } from "../../../utils/dateFormet";
+import { IWorkshop } from "../../../types";
+import { Link } from "react-router-dom";
 
 // Define the type for the props
 interface WorkshopApprovalsTableProps {
@@ -10,9 +13,9 @@ interface WorkshopApprovalsTableProps {
   loading: boolean;
   showViewUserModal: (record: any) => void; // Function to handle viewing a user
   setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const WorkshopApprovalsTable: React.FC<WorkshopApprovalsTableProps> = ({
@@ -26,17 +29,42 @@ const WorkshopApprovalsTable: React.FC<WorkshopApprovalsTableProps> = ({
 }) => {
   const columns = [
     {
-      title: "UID",
-      dataIndex: "id",
-      key: "id",
+      title: "ID",
+      dataIndex: "_id",
+      key: "_id",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
     },
     { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Host Name", dataIndex: "hostName", key: "hostName" },
-    { title: "Date", dataIndex: "date", key: "date" },
+    { title: "Price (€)", dataIndex: "price", key: "price" },
+    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
+    { title: "Host Name", dataIndex: ["authorId", "name"], key: "authorId" },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (text: string) => formatDate(text),
+    },
+    {
+      title: "Time",
+      dataIndex: "time",
+      key: "time",
+      render: (text: string) => formetTime(text),
+    },
     { title: "Location Type", dataIndex: "locationType", key: "locationType" },
-    { title: "Location", dataIndex: "location", key: "location" },
-    { title: "Status", dataIndex: "status", key: "status" },
-    { title: "Participants", dataIndex: "participants", key: "participants" },
+    {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+      render: (_: unknown, record: IWorkshop) =>
+        record?.locationType === "online" ? (
+          <Link to={"https://" + record?.workshopLink} target="_blank">
+            {record?.workshopLink}
+          </Link>
+        ) : (
+          record?.location
+        ),
+    },
     {
       title: "Action",
       key: "action",

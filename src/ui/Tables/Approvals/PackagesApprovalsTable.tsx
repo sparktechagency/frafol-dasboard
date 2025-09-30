@@ -34,6 +34,7 @@ const PackagesApprovalsTable: React.FC<PackagesApprovalsTableProps> = ({
     },
     { title: "Package Title", dataIndex: "title", key: "title" },
     { title: "Price", dataIndex: "price", key: "price" },
+    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
     {
       title: "Photographer / Videographer",
       dataIndex: ["authorId", "name"],
