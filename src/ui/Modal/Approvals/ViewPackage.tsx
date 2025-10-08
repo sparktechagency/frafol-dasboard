@@ -5,6 +5,7 @@ import { FaEuroSign } from "react-icons/fa6";
 import { LuClock } from "react-icons/lu";
 import ReuseButton from "../../Button/ReuseButton";
 import { FaUserAlt } from "react-icons/fa";
+import { IoCalendarOutline } from "react-icons/io5";
 
 const ViewPackage = ({
   showApproveModal,
@@ -61,14 +62,25 @@ const ViewPackage = ({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <LuClock className="text-secondary-color text-sm sm:text-base lg:text-lg" />
+              <p className="text-xs sm:text-sm lg:text-base font-semibold">
+                Duration:
+              </p>
+            </div>
+            <p className="text-xs sm:text-sm lg:text-base">
+              {currentRecord?.duration}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <IoCalendarOutline className="text-secondary-color text-sm sm:text-base lg:text-lg" />
               <p className="text-xs sm:text-sm lg:text-base font-semibold">
                 Delivery Time:
               </p>
             </div>
             <p className="text-xs sm:text-sm lg:text-base">
-              {currentRecord?.duration / 7} Weeks{" "}
+              {currentRecord?.deliveryTime / 7} Week
             </p>
           </div>
           <div className="flex items-center gap-3">

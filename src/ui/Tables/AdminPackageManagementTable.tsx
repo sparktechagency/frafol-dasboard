@@ -72,8 +72,8 @@ const AdminPackageManagementTable: React.FC<
 
     {
       title: "Delivery Time",
-      dataIndex: "duration",
-      key: "duration",
+      dataIndex: "deliveryTime",
+      key: "deliveryTime",
       render: (text: number) => `${text / 7} weeks`,
     },
     { title: "Duration", dataIndex: "duration", key: "duration" },

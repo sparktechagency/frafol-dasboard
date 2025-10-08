@@ -5,6 +5,7 @@ import { getImageUrl } from "../../../helpers/config/envConfig";
 import { FaEuroSign } from "react-icons/fa6";
 import { LuClock } from "react-icons/lu";
 import { FaUserAlt } from "react-icons/fa";
+import { IoCalendarOutline } from "react-icons/io5";
 
 interface ViewPackageManagementModalProps {
   isViewModalVisible: boolean;
@@ -72,14 +73,25 @@ const ViewPackageManagementModal: React.FC<ViewPackageManagementModalProps> = ({
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <LuClock className="text-secondary-color text-sm sm:text-base lg:text-lg" />
+                <p className="text-xs sm:text-sm lg:text-base font-semibold">
+                  Duration:
+                </p>
+              </div>
+              <p className="text-xs sm:text-sm lg:text-base">
+                {currentRecord?.duration}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <IoCalendarOutline className="text-secondary-color text-sm sm:text-base lg:text-lg" />
                 <p className="text-xs sm:text-sm lg:text-base font-semibold">
                   Delivery Time:
                 </p>
               </div>
               <p className="text-xs sm:text-sm lg:text-base">
-                {currentRecord?.duration && currentRecord?.duration / 7} Weeks{" "}
+                {currentRecord?.deliveryTime || 0 / 7} Week
               </p>
             </div>
             <div className="flex items-center gap-3">
