@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
-import { IUserDataType } from "../../../types/UserDataTypes";
 import { Image as AntdImage } from "antd"; // import this
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { AllImages } from "../../../../public/images/AllImages";
 interface UserViewPortfolioModalProps {
   isViewProtfolioModalVisible: boolean;
   handleCancel: () => void;
-  currentRecord: IUserDataType | null;
+  currentRecord: any | null;
 }
 const UserViewPortfolioModal: React.FC<UserViewPortfolioModalProps> = ({
   isViewProtfolioModalVisible,

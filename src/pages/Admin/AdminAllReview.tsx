@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import reviewData from "../../../public/data/Review";
 import AdminViewReviewModal from "../../ui/Modal/Review/AdminViewReviewModal";
 
-import { ReviewType } from "../../types/ReviewType";
 import DeleteModal from "../../ui/Modal/DeleteModal";
 import AdminAllReviewTable from "../../ui/Tables/AdminAllReviewTable";
 
@@ -15,14 +15,14 @@ const AdminAllReview = () => {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-  const [currentRecord, setCurrentRecord] = useState<ReviewType | null>(null);
+  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
 
-  const showViewUserModal = (record: ReviewType) => {
+  const showViewUserModal = (record: any) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
 
-  const showDeleteModal = (record: ReviewType) => {
+  const showDeleteModal = (record: any) => {
     setCurrentRecord(record);
     setIsDeleteModalVisible(true);
   };
@@ -33,7 +33,7 @@ const AdminAllReview = () => {
     setCurrentRecord(null);
   };
 
-  const handleDelete = (data: ReviewType) => {
+  const handleDelete = (data: any) => {
     console.log(data);
   };
   return (
@@ -69,7 +69,7 @@ const AdminAllReview = () => {
             isDeleteModalVisible={isDeleteModalVisible}
             handleCancel={handleCancel}
             currentRecord={currentRecord}
-            handleDelete={() => handleDelete(currentRecord as ReviewType)}
+            handleDelete={() => handleDelete(currentRecord as any)}
           />
         </div>
       </div>

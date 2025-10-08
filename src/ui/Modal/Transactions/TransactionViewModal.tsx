@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
-import { ITransactionType } from "../../../types/TransactionType";
 import ReuseButton from "../../Button/ReuseButton";
 interface TransactionViewModalProps {
   isViewModalVisible: boolean;
   handleCancel: () => void;
-  currentRecord: ITransactionType | null;
+  currentRecord: any | null;
 }
 const TransactionViewModal: React.FC<TransactionViewModalProps> = ({
   isViewModalVisible,

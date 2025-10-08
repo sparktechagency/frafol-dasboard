@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
 import { AllImages } from "../../../../public/images/AllImages";
-import { IUserDataType } from "../../../types/UserDataTypes";
 import { FaStar } from "react-icons/fa";
 import ReuseButton from "../../Button/ReuseButton";
 interface UserModalProps {
   isViewModalVisible: boolean;
   handleCancel: () => void;
-  currentRecord: IUserDataType | null;
+  currentRecord: any | null;
   activeTab: string;
   showViewPortfolioModal: (record: any) => void;
 }

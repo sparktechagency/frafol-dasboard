@@ -1,14 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Rate, Space, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import ReuseTable from "../../utils/ReuseTable";
 import { MdDelete } from "react-icons/md";
-import { ReviewType } from "../../types/ReviewType";
 
 interface AdminAllReviewTableProps {
-  data: ReviewType[];
+  data: any[];
   loading: boolean;
-  showViewModal: (record: ReviewType) => void;
-  showDeleteModal: (record: ReviewType) => void;
+  showViewModal: (record: any) => void;
+  showDeleteModal: (record: any) => void;
   setPage: (page: number) => void;
   page: number;
   total: number;
@@ -64,7 +64,7 @@ const AdminAllReviewTable: React.FC<AdminAllReviewTableProps> = ({
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: ReviewType) => (
+      render: (_: unknown, record: any) => (
         <Space size="middle">
           {/* View Details Tooltip */}
           <Tooltip placement="right" title="View Details">

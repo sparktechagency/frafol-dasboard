@@ -150,3 +150,17 @@ input[type="number"]::-webkit-outer-spin-button {
 .ant-table-column-sorters .ant-table-column-sorter-inner .active {
   color: #ad2b08 !important;
 } */
+
+.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background-color: #ad2b08 !important;
+  color: #ffffff !important;
+}
+
+.ant-picker-now-btn {
+  color: #ad2b08 !important;
+}
+
+.ant-picker-ok button {
+  background-color: #ad2b08 !important;
+  color: #ffffff !important;
+}

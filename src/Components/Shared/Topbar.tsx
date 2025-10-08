@@ -40,8 +40,8 @@ const notifications = [
 
 const Topbar = ({ collapsed, setCollapsed }: any) => {
   const serverUrl = getImageUrl();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [open, setOpen] = useState(false);
+  console.log(open);
 
   const user = useUserData();
   const { data, isFetching } = useGetProfileQuery({});

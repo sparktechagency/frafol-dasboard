@@ -1,4 +1,3 @@
-import React from "react";
 import { AllImages } from "../../../../public/images/AllImages";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LuClock, LuUsers } from "react-icons/lu";
