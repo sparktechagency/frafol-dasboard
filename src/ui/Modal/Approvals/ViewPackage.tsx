@@ -62,6 +62,17 @@ const ViewPackage = ({
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <FaEuroSign className="text-secondary-color text-sm sm:text-base lg:text-lg" />
+              <p className="text-xs sm:text-sm lg:text-base font-semibold">
+                Price After Service Fee:
+              </p>
+            </div>
+            <p className="text-xs sm:text-sm lg:text-base">
+              {currentRecord?.mainPrice}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <LuClock className="text-secondary-color text-sm sm:text-base lg:text-lg" />
               <p className="text-xs sm:text-sm lg:text-base font-semibold">
@@ -90,6 +101,17 @@ const ViewPackage = ({
                 Author:
               </p>
             </div>
+            <img
+              src={
+                currentRecord?.authorId?.profileImage
+                  ? serverUrl + currentRecord?.authorId?.profileImage
+                  : AllImages?.profile
+              }
+              alt={currentRecord?.authorId?.name}
+              width={30}
+              height={30}
+              className="rounded-full"
+            />
             <p className="text-xs sm:text-sm lg:text-base">
               {currentRecord?.authorId?.name}
             </p>

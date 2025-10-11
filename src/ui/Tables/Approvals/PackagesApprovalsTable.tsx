@@ -31,17 +31,29 @@ const PackagesApprovalsTable: React.FC<PackagesApprovalsTableProps> = ({
       key: "_id",
       render: (_: unknown, __: unknown, index: number) =>
         page * limit - limit + index + 1,
+      fixed: "left",
     },
-    { title: "Package Title", dataIndex: "title", key: "title" },
-    { title: "Price", dataIndex: "price", key: "price" },
-    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
+    { title: "Package Title", dataIndex: "title", key: "title", fixed: "left" },
+    { title: "Price (€)", dataIndex: "price", key: "price", align: "center" },
     {
-      title: "Photographer / Videographer",
+      title: "Price After Service Fee (€)",
+      dataIndex: "mainPrice",
+      key: "mainPrice",
+      align: "center",
+    },
+    {
+      title: "VAT (%)",
+      dataIndex: "vatAmount",
+      key: "vatAmount",
+      align: "center",
+    },
+    {
+      title: "Professional Name",
       dataIndex: ["authorId", "name"],
       key: "authorId",
     },
     {
-      title: "Photographer / Videographer",
+      title: "Professional Role",
       dataIndex: ["authorId", "role"],
       key: "authorId",
       render: (_: unknown, record: IPackage) => (
@@ -51,13 +63,6 @@ const PackagesApprovalsTable: React.FC<PackagesApprovalsTableProps> = ({
             : record?.authorId?.role}
         </p>
       ),
-    },
-
-    {
-      title: "VAT",
-      dataIndex: "vatAmount",
-      key: "vatAmount",
-      render: (text: number) => `${text}%`,
     },
     {
       title: "Category",
