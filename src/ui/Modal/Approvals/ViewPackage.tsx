@@ -95,7 +95,7 @@ const ViewPackage = ({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <FaUserAlt className="text-secondary-color text-sm sm:text-base lg:text-lg" />
               <p className="text-xs sm:text-sm lg:text-base font-semibold">
                 Author:
@@ -110,7 +110,7 @@ const ViewPackage = ({
               alt={currentRecord?.authorId?.name}
               width={30}
               height={30}
-              className="rounded-full"
+              className="rounded-full h-6 w-6 object-cover"
             />
             <p className="text-xs sm:text-sm lg:text-base">
               {currentRecord?.authorId?.name}

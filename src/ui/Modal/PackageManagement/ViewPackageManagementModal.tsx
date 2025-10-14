@@ -121,7 +121,7 @@ const ViewPackageManagementModal: React.FC<ViewPackageManagementModalProps> = ({
                 alt={currentRecord?.authorId?.name}
                 width={30}
                 height={30}
-                className="rounded-full"
+                className="rounded-full h-6 w-6 object-cover"
               />
               <p className="text-xs sm:text-sm lg:text-base">
                 {currentRecord?.authorId?.name}

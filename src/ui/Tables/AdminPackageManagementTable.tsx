@@ -41,7 +41,7 @@ const AdminPackageManagementTable: React.FC<
     { title: "Package Title", dataIndex: "title", key: "title", fixed: "left" },
     { title: "Price (€)", dataIndex: "price", key: "price", align: "center" },
     {
-      title: "Price After Service Fee (€)",
+      title: "Price After Adding Service Fee & VAT (€)",
       dataIndex: "mainPrice",
       key: "mainPrice",
       align: "center",
