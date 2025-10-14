@@ -37,6 +37,12 @@ const WorkshopApprovalsTable: React.FC<WorkshopApprovalsTableProps> = ({
     },
     { title: "Title", dataIndex: "title", key: "title" },
     { title: "Price (€)", dataIndex: "price", key: "price" },
+    {
+      title: "Price After Adding Service Fee & VAT (€)",
+      dataIndex: "mainPrice",
+      key: "mainPrice",
+      align: "center",
+    },
     { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
     { title: "Host Name", dataIndex: ["authorId", "name"], key: "authorId" },
     {
@@ -58,7 +64,7 @@ const WorkshopApprovalsTable: React.FC<WorkshopApprovalsTableProps> = ({
       key: "location",
       render: (_: unknown, record: IWorkshop) =>
         record?.locationType === "online" ? (
-          <Link to={"https://" + record?.workshopLink} target="_blank">
+          <Link to={record?.workshopLink} target="_blank">
             {record?.workshopLink}
           </Link>
         ) : (

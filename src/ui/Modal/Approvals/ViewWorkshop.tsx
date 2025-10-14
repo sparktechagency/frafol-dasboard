@@ -101,7 +101,7 @@ const ViewWorkshop = ({
         </div>
         <div className="flex items-center gap-2 mt-5 justify-between">
           <p className="text-base sm:text-lg lg:text-xl font-semibold">
-            {currentRecord?.price}€
+            {currentRecord?.mainPrice}€
           </p>
         </div>
       </div>

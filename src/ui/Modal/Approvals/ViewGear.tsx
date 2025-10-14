@@ -80,7 +80,7 @@ const ViewGear = ({
                 Product Price
               </h4>
               <p className="text-xs sm:text-sm lg:text-base bg-zinc-100 p-2 rounded mb-5">
-                €{currentRecord?.price}
+                {currentRecord?.price}€
               </p>
             </div>
             <div>
@@ -89,6 +89,14 @@ const ViewGear = ({
               </h4>
               <p className="text-xs sm:text-sm lg:text-base bg-zinc-100 p-2 rounded mb-5">
                 {currentRecord?.vatAmount}%
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xs sm:text-sm lg:text-base font-medium mb-1">
+                Price After Adding Service Charge & VAT
+              </h4>
+              <p className="text-xs sm:text-sm lg:text-base bg-zinc-100 p-2 rounded mb-5">
+                {currentRecord?.mainPrice}€
               </p>
             </div>
             <div>

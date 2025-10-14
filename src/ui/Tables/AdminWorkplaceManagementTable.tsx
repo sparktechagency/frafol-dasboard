@@ -54,6 +54,13 @@ const AdminWorkplaceManagementTable: React.FC<
       fixed: "left",
       width: 300,
     },
+    { title: "Price (€)", dataIndex: "price", key: "price" },
+    {
+      title: "Price After Adding Service Fee & VAT (€)",
+      dataIndex: "mainPrice",
+      key: "mainPrice",
+      align: "center",
+    },
     {
       title: "Description",
       dataIndex: "description",

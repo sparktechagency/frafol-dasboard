@@ -34,6 +34,7 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
       key: "_id",
       render: (_: unknown, __: unknown, index: number) =>
         page * limit - limit + index + 1,
+      fixed: "left",
     },
     {
       title: "Item Image",
@@ -48,11 +49,13 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
           className="rounded w-10 h-10 object-cover"
         />
       ),
+      fixed: "left",
     },
     {
       title: "Item Name",
       dataIndex: "name",
       key: "name",
+      fixed: "left",
     },
     {
       title: "Item Category",
@@ -80,8 +83,20 @@ const GearApprovalsTable: React.FC<GearApprovalsTableProps> = ({
       title: "Item Price (€)",
       dataIndex: "price",
       key: "price",
+      align: "center",
     },
-    { title: "VAT (%)", dataIndex: "vatAmount", key: "vatAmount" },
+    {
+      title: "VAT Amount (%)",
+      dataIndex: "vatAmount",
+      key: "vatAmount",
+      align: "center",
+    },
+    {
+      title: "Item Price After Adding Service Charges & VAT (€)",
+      dataIndex: "mainPrice",
+      key: "mainPrice",
+      align: "center",
+    },
 
     {
       title: "Condition",
