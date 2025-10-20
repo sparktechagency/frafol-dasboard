@@ -1,6 +1,7 @@
 export const tagTypes = {
   auth: "Auth",
   users: "Users",
+  orderManagement: "OrderManagement",
   gear: "Gear",
   package: "Package",
   category: "Category",
@@ -14,6 +15,7 @@ export const tagTypes = {
 export const tagTypesList = [
   tagTypes.auth,
   tagTypes.users,
+  tagTypes.orderManagement,
   tagTypes.gear,
   tagTypes.package,
   tagTypes.category,
