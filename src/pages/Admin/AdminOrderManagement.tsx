@@ -6,35 +6,20 @@ import ProfessionalOrderManagementTable from "../../ui/Tables/OrderManagement/Pr
 import GearOrderManagementTable from "../../ui/Tables/OrderManagement/GearOrderManagementTable";
 import AdminOrderManagementOverview from "../../Components/Dashboard/AdminOrderManagement/AdminOrderManagementOverview";
 import {
+  useCancelGearOrderMutation,
   useCancelOrderMutation,
+  useGetAllGearOrderManagementQuery,
   useGetAllOrderManagementQuery,
 } from "../../redux/features/orderManagement/orderManagementApi";
-import { IEventOrder } from "../../types";
+import { IEventOrder, IGearOrder } from "../../types";
 import ViewOrderManagementModal from "../../ui/Modal/OrderManagement/ViewOrderManagementModal";
 import tryCatchWrapper from "../../utils/tryCatchWrapper";
 import CancelModalWithReason from "../../ui/Modal/CancelModalWithReason";
+import GearOrderViewModal from "../../ui/Modal/OrderManagement/GearOrderViewModal";
 
 const AdminOrderManagement = () => {
-  const deliveryManagementGearData = Array.from({ length: 20 }).map(
-    (_, index) => {
-      const deliveryStatus =
-        index % 3 === 0 ? "Completed" : index % 3 === 1 ? "Active" : "Canceled";
-
-      return {
-        orderId: index + 1,
-        clientName: "Lívia Nováková",
-        itemName: "Camera Lens",
-        sellerName: "Lívia Nováková",
-        category: "Photography Gear",
-        amount: "$200",
-        deliveryDate: "24 May, 2025",
-        location: "New York, USA",
-        deliveryStatus,
-      };
-    }
-  );
-
   const [cancelOrder] = useCancelOrderMutation();
+  const [cancelGearOrder] = useCancelGearOrderMutation();
 
   const [activeTab, setActiveTab] = useState<"photographyVideography" | "gear">(
     "photographyVideography"
@@ -49,18 +34,30 @@ const AdminOrderManagement = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    {
+      refetchOnMountOrArgChange: true,
+      skip: activeTab !== "photographyVideography",
+    }
   );
 
   const eventOrder: IEventOrder[] = data?.data || [];
   const totalEventOrder = data?.meta?.total || 0;
 
-  console.log(eventOrder);
+  const { data: gearData, isFetching: isGearFetching } =
+    useGetAllGearOrderManagementQuery(
+      {
+        limit,
+        page,
+        searchTerm: searchText,
+      },
+      {
+        refetchOnMountOrArgChange: true,
+        skip: activeTab === "photographyVideography",
+      }
+    );
 
-  const tableData =
-    activeTab === "photographyVideography"
-      ? eventOrder
-      : deliveryManagementGearData;
+  const gearOrder: IGearOrder[] = gearData?.data?.data || [];
+  const totalGearOrder = gearData?.meta?.total || 0;
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [showCancelPaymentModal, setShowCancelPaymentModal] = useState(false);
@@ -82,6 +79,28 @@ const AdminOrderManagement = () => {
     setIsViewModalVisible(false);
   };
 
+  const [isViewGearModalVisible, setIsViewGearModalVisible] = useState(false);
+  const [isCancelGearModal, setisCancelGearModal] = useState(false);
+  const [currentGearRecord, setCurrentGearRecord] = useState<IGearOrder | null>(
+    null
+  );
+
+  const showViewGearModal = (record: IGearOrder) => {
+    setCurrentGearRecord(record);
+    setIsViewGearModalVisible(true);
+  };
+
+  const showCancelGearModal = (record: IGearOrder) => {
+    setisCancelGearModal(true);
+    setCurrentGearRecord(record);
+  };
+
+  const handleGearCancel = () => {
+    setCurrentGearRecord(null);
+    setisCancelGearModal(false);
+    setIsViewGearModalVisible(false);
+  };
+
   const handleCancelOrder = async (values: any, data: IEventOrder) => {
     const res = await tryCatchWrapper(
       cancelOrder,
@@ -90,6 +109,17 @@ const AdminOrderManagement = () => {
     );
     if (res?.success) {
       handleCancel();
+    }
+  };
+
+  const handleCancelGearOrder = async (values: any, data: IGearOrder) => {
+    const res = await tryCatchWrapper(
+      cancelGearOrder,
+      { body: values, params: data?._id },
+      "Cancelling order..."
+    );
+    if (res?.success) {
+      handleGearCancel();
     }
   };
 
@@ -134,12 +164,13 @@ const AdminOrderManagement = () => {
             value: "gear",
             content: (
               <GearOrderManagementTable
-                data={tableData}
-                loading={false}
-                showCancleModal={showCancelModal}
+                data={gearOrder}
+                loading={isGearFetching}
+                showViewModal={showViewGearModal}
+                showCancleModal={showCancelGearModal}
                 setPage={setPage}
                 page={page}
-                total={tableData.length}
+                total={totalGearOrder}
                 limit={limit}
               />
             ),
@@ -156,11 +187,33 @@ const AdminOrderManagement = () => {
         handleCancel={handleCancel}
         currentRecord={currentRecord}
       />
+      <GearOrderViewModal
+        isViewModalVisible={isViewGearModalVisible}
+        handleCancel={handleGearCancel}
+        currentRecord={currentGearRecord}
+      />
+
       <CancelModalWithReason
-        isCancelModalWithReasonVisible={showCancelPaymentModal}
-        handleCancel={handleCancel}
-        currentRecord={currentRecord}
-        handleCancelOrder={handleCancelOrder}
+        isCancelModalWithReasonVisible={
+          activeTab === "photographyVideography"
+            ? showCancelPaymentModal
+            : isCancelGearModal
+        }
+        handleCancel={
+          activeTab === "photographyVideography"
+            ? handleCancel
+            : handleGearCancel
+        }
+        currentRecord={
+          activeTab === "photographyVideography"
+            ? currentRecord
+            : currentGearRecord
+        }
+        handleCancelOrder={
+          activeTab === "photographyVideography"
+            ? handleCancelOrder
+            : handleCancelGearOrder
+        }
       />
     </div>
   );

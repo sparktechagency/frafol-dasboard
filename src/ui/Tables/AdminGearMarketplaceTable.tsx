@@ -118,6 +118,12 @@ const AdminGearMarketplaceTable: React.FC<AdminGearMarketplaceTableProps> = ({
       ),
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+    },
+    {
       title: "Action",
       key: "action",
       render: (_: unknown, record: IGear) => (

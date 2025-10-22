@@ -1,14 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Tooltip } from "antd";
+import { Space, Tooltip } from "antd";
 import React from "react";
-import { MdOutlineCancel } from "react-icons/md";
 import ReuseTable from "../../../utils/ReuseTable";
+import { formatDate } from "../../../utils/dateFormet";
+import { IGearOrder } from "../../../types";
+import { gearOrderStatus } from "../../../utils/budgetLabels";
+import { IoMdEye } from "react-icons/io";
+import { MdOutlineCancel } from "react-icons/md";
 
 // Define the type for the props
 interface GearOrderManagementTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IGearOrder[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showCancleModal: (record: any) => void; // Function to handle viewing payment details
+  showViewModal: (record: IGearOrder) => void; // Function to handle viewing payment details
+  showCancleModal: (record: IGearOrder) => void; // Function to handle viewing payment details
   setPage?: (page: number) => void; // Function to handle pagination
   page?: number;
   total?: number;
@@ -19,6 +23,7 @@ const GearOrderManagementTable: React.FC<GearOrderManagementTableProps> = ({
   data,
   loading,
   setPage,
+  showViewModal,
   showCancleModal,
   page,
   total,
@@ -29,57 +34,82 @@ const GearOrderManagementTable: React.FC<GearOrderManagementTableProps> = ({
       title: "Order ID",
       dataIndex: "orderId",
       key: "orderId",
+      fixed: "left",
     },
     {
       title: "Client Name",
-      dataIndex: "clientName",
-      key: "clientName",
-    },
-    {
-      title: "Item Name",
-      dataIndex: "itemName",
-      key: "itemName",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Seller Name",
-      dataIndex: "sellerName",
-      key: "sellerName",
+      dataIndex: ["sellerId", "name"],
+      key: "sellerId",
     },
-
+    {
+      title: "Mobile Number",
+      dataIndex: "mobileNumber",
+      key: "mobileNumber",
+    },
+    {
+      title: "Item Name",
+      dataIndex: ["gearMarketplaceId", "name"],
+      key: ["gearMarketplaceId", "name"],
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text: string) => formatDate(text),
+    },
     {
       title: "Amount",
-      dataIndex: "amount",
+      dataIndex: ["gearMarketplaceId", "mainPrice"],
       key: "amount",
     },
     {
-      title: "Delivery Date",
-      dataIndex: "deliveryDate",
-      key: "deliveryDate",
+      title: "Shipping Details",
+      dataIndex: ["gearMarketplaceId", "shippingCompany"],
+      key: "shippingDetails",
+      render: (shippingCompany: { name: string; price: number }) =>
+        `${shippingCompany.name} - $${shippingCompany.price}`,
     },
+
     {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-    },
-    {
-      title: "Delivery Status",
-      dataIndex: "deliveryStatus",
-      key: "deliveryStatus",
+      title: "Order Status",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (_: string, record: IGearOrder) => {
+        return (
+          gearOrderStatus[record?.orderStatus as string] || record?.orderStatus
+        );
+      },
     },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
-        <div>
-          <Tooltip placement="right" title="Cancle">
+      render: (_: unknown, record: IGearOrder) => (
+        <Space size="middle">
+          <Tooltip placement="right" title="View Details">
             <button
-              className="!p-0 !bg-transparent !border-none !text-secondary-color cursor-pointer"
-              onClick={() => showCancleModal(record)}
+              className="!p-0 !bg-transparent !border-none cursor-pointer"
+              onClick={() => showViewModal(record)}
             >
-              <MdOutlineCancel style={{ fontSize: "24px" }} />
+              <IoMdEye style={{ fontSize: "24px" }} />
             </button>
           </Tooltip>
-        </div>
+          {record?.orderStatus !== "cancelled" &&
+            record?.orderStatus !== "delivered" && (
+              <Tooltip placement="right" title="Cancel">
+                <button
+                  className="!p-0 !bg-transparent !border-none !text-secondary-color cursor-pointer"
+                  onClick={() => showCancleModal(record)}
+                >
+                  <MdOutlineCancel style={{ fontSize: "24px" }} />
+                </button>
+              </Tooltip>
+            )}
+        </Space>
       ),
     },
   ];

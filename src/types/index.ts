@@ -5,3 +5,4 @@ export * from "./gear.type";
 export * from "./package.type";
 export * from "./workshop.type";
 export * from "./eventOrder.type";
+export * from "./gearOrder.type";

@@ -13,6 +13,16 @@ const orderManagementApi = baseApi.injectEndpoints({
       },
       providesTags: [tagTypes.orderManagement],
     }),
+    getAllGearOrderManagement: builder.query({
+      query: ({ page, limit, searchTerm }) => {
+        return {
+          url: "/gear-order",
+          method: "GET",
+          params: { page, limit, searchTerm },
+        };
+      },
+      providesTags: [tagTypes.orderManagement],
+    }),
     cancelOrder: builder.mutation({
       query: (req) => ({
         url: `/event-order/cancel/${req?.params}`,
@@ -21,8 +31,20 @@ const orderManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.orderManagement],
     }),
+    cancelGearOrder: builder.mutation({
+      query: (req) => ({
+        url: `/gear-order/cancel/${req?.params}`,
+        method: "PATCH",
+        body: req.body,
+      }),
+      invalidatesTags: [tagTypes.orderManagement],
+    }),
   }),
 });
 
-export const { useGetAllOrderManagementQuery, useCancelOrderMutation } =
-  orderManagementApi;
+export const {
+  useGetAllOrderManagementQuery,
+  useGetAllGearOrderManagementQuery,
+  useCancelOrderMutation,
+  useCancelGearOrderMutation,
+} = orderManagementApi;
