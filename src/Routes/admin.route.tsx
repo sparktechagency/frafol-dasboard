@@ -19,7 +19,6 @@ import AdminDashboard from "../pages/Admin/AdminDashboard";
 import AdminDeliveryManagement from "../pages/Admin/AdminDeliveryManagement";
 import AdminGearMarketplacePage from "../pages/Admin/AdminGearMarketplace";
 import AdminWorkshopManagement from "../pages/Admin/AdminWorkshopManagement";
-import MessagePage from "../pages/Admin/MessagePage";
 import AdminAllTransaction from "../pages/Admin/AdminAllTransaction";
 import AdminAllReports from "../pages/Admin/AdminAllReports";
 import AdminCommissionSetupPage from "../pages/Admin/AdminCommissionSetupPage";
@@ -35,6 +34,7 @@ import AdminOrderManagement from "../pages/Admin/AdminOrderManagement";
 import AdminAllUsers from "../pages/Admin/AdminAllUsers";
 import AdminApprovals from "../pages/Admin/AdminApprovals";
 import AdminPackageManagement from "../pages/Admin/AdminPackageManagement";
+import ConversationPage from "../pages/Common/ConversationPage";
 
 export const adminPaths = [
   {
@@ -117,7 +117,7 @@ export const adminPaths = [
   },
   {
     path: "messages",
-    element: <MessagePage />,
+    element: <ConversationPage />,
     key: "messages",
     name: "Messages",
     icon: messageLogo,

@@ -10,6 +10,7 @@ export const tagTypes = {
   feedback: "Feedback",
   profile: "Profile",
   setting: "Setting",
+  conversation: "Conversation",
 };
 
 export const tagTypesList = [
