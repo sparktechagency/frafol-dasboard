@@ -73,8 +73,8 @@ const ConversationChatListCard = ({
             </div>
             <div className="flex justify-between items-center w-full">
               <div className="text-sm">
-                {conversation?.message
-                  ? `${conversation?.message.slice(0, 10)}...`
+                {conversation?.lastMessage
+                  ? `${conversation?.lastMessage.slice(0, 10)}...`
                   : ""}
               </div>
               <div className="text-xs">

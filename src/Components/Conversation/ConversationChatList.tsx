@@ -35,34 +35,43 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
     );
 
   const handleNewMessage = useCallback((message: any) => {
-    const newMessage = message?.data;
-    console.log("newMessage", newMessage);
-    if (!newMessage?.conversationId) return;
+    const { chatId, text, sender, time } = message;
 
-    setChatList((prevChatList: any) => {
+    // Find if this conversation already exists
+    setChatList((prevChatList: IConversation[]) => {
       const existingIndex = prevChatList.findIndex(
-        (item: any) =>
-          item.lastMessage?.conversationId === newMessage.conversationId
+        (item) => item.chat._id === chatId
       );
 
       if (existingIndex !== -1) {
-        // Update the existing conversation's lastMessage
+        // Update the existing conversation's lastMessage and updatedAt
         const updatedList = [...prevChatList];
         updatedList[existingIndex] = {
           ...updatedList[existingIndex],
-          lastMessage: newMessage,
-          updatedAt: newMessage.updatedAt,
+          lastMessage: text,
+          lastMessageSender: sender._id,
+          lastMessageCreatedAt: time,
+          unreadMessageCount: updatedList[existingIndex].unreadMessageCount + 1,
         };
         return updatedList;
       } else {
-        // Push a new conversation (you need to define what a new conversation looks like)
-        const newConversation = {
-          _id: newMessage.conversationId,
-          lastMessage: newMessage,
-          createdAt: newMessage.createdAt,
-          updatedAt: newMessage.updatedAt,
-          self: {}, // You should populate this from context or existing data
-          otherUser: {}, // Same as above
+        // If this is a new conversation
+        const newConversation: IConversation = {
+          chat: {
+            _id: chatId,
+            users: [sender], // you might need to merge with self if needed
+            createdBy: sender._id,
+            unreadCounts: 1,
+            blockedUsers: null,
+            createdAt: time,
+            updatedAt: time,
+            __v: 0,
+          },
+          lastMessage: text,
+          lastMessageSender: sender._id,
+          unreadMessageCount: 1,
+          message: text,
+          lastMessageCreatedAt: time,
         };
         return [newConversation, ...prevChatList];
       }
@@ -80,8 +89,11 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
     if (!socket.connected) {
       socket.connect();
     }
-    socket.on(`new_message::${userData?.userId}`, handleNewMessage);
-    socket.on("online_users", (online: any) => {
+    socket.on(`newMessage`, (message: any) => {
+      console.log(" New Message Received from socket:", message);
+      handleNewMessage(message);
+    });
+    socket.on("onlineUser", (online: any) => {
       console.log("Online Users:", online);
       dispatch(setOnlineUsers(online));
     });
@@ -91,10 +103,10 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
     // };
 
     return () => {
-      socket.off("online_users", (message: any) => {
-        console.log("📨 online_users Received from socket:", message);
+      socket.off("onlineUser", (message: any) => {
+        console.log("📨 onlineUser Received from socket:", message);
       });
-      socket.off("new_message", (message: any) => {
+      socket.off("newMessage", (message: any) => {
         console.log("📨New Message Off:", message);
       });
     };
@@ -107,15 +119,7 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
   }, [allChatList?.data]);
 
   const filteredConversations = useMemo(() => {
-    console.log(
-      "chatList ===>",
-      chatList?.slice()?.sort((a: IConversation, b: IConversation) => {
-        const dateA = new Date(a?.lastMessageCreatedAt || 0).getTime();
-        const dateB = new Date(b?.lastMessageCreatedAt || 0).getTime();
-        return dateB - dateA;
-      })
-    );
-    return chatList?.slice()?.sort((a: IConversation, b: IConversation) => {
+    return chatList?.slice()?.sort((a: any, b: any) => {
       const dateA = new Date(a?.lastMessageCreatedAt || 0).getTime();
       const dateB = new Date(b?.lastMessageCreatedAt || 0).getTime();
       return dateB - dateA;
