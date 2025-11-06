@@ -26,7 +26,7 @@ const ConversationMessage = ({ userData, onlineUsers }: any) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const limit = 15;
+  const limit = 50;
 
   const {
     data: allMessages,
@@ -146,11 +146,9 @@ const ConversationMessage = ({ userData, onlineUsers }: any) => {
       }`}
     >
       {selectedConversation ? (
-        <Layout
-          className={`py-6 px-2 !bg-[#FFFAF5] lg:col-span-3 xl:col-span-4 h-full`}
-        >
+        <Layout className={` lg:col-span-3 xl:col-span-4 h-full`}>
           {/* Header */}
-          <div className="!bg-[#FFFFFF] p-2 lg:p-4 border-b-2 flex justify-between items-center">
+          <div className="!bg-[#FFFFFF] p-2 lg:p-4 border-b-2 border-secondary-color/20 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="flex items-center mr-2">
                 <MdOutlineArrowBackIosNew

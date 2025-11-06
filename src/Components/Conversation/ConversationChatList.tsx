@@ -22,12 +22,12 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
   const seletedConversation = useAppSelector(selectSelectedChatUser);
   const [chatList, setChatList] = useState<IConversation[]>([]);
 
-  console.log("chatList", chatList);
+  console.log("chatList", searchTerm);
 
   const { data: allChatList, isFetching: isAllChatFeacthing } =
     useGetConversationListQuery(
       {
-        searchTerm,
+        search: searchTerm,
       },
       {
         skip: !userData?.userId,
@@ -132,7 +132,7 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
 
   return (
     <div
-      className={`w-full lg:w-[400px] overflow-y-auto px-3 ${
+      className={`w-full lg:w-[400px] border-r-2 border-secondary-color/20 overflow-y-auto px-3 ${
         seletedConversation ? "hidden lg:block" : "block lg:block"
       }`}
     >
@@ -152,7 +152,7 @@ const ConversationChatList = ({ userData, onlineUsers }: any) => {
           <FadeLoader color="#28314E" />
         </div>
       ) : (
-        <div className="md:h-full h-fit mb-3">
+        <div className="h-fit mb-3">
           <div className=" text-gray-300 bg-white   ">
             {filteredConversations?.map((conversation: IConversation) => {
               // Compute the image source URL
