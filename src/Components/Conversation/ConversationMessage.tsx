@@ -35,7 +35,10 @@ const ConversationMessage = ({ userData, onlineUsers }: any) => {
   } = useGetConversationMessageListQuery(
     selectedConversation?.chat?._id
       ? { id: selectedConversation.chat?._id, page, limit }
-      : undefined
+      : undefined,
+    {
+      skip: !selectedConversation?.chat?._id,
+    }
   );
 
   // Reset on conversation change
