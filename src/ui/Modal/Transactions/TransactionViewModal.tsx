@@ -1,17 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
 import ReuseButton from "../../Button/ReuseButton";
+import { ITransaction } from "../../../types";
+
 interface TransactionViewModalProps {
   isViewModalVisible: boolean;
   handleCancel: () => void;
-  currentRecord: any | null;
+  currentRecord: ITransaction | null;
 }
+
 const TransactionViewModal: React.FC<TransactionViewModalProps> = ({
   isViewModalVisible,
   handleCancel,
   currentRecord,
 }) => {
-  console.log(currentRecord);
+  if (!currentRecord) return null;
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleString("en-US", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   return (
     <Modal
       open={isViewModalVisible}
@@ -26,33 +38,45 @@ const TransactionViewModal: React.FC<TransactionViewModalProps> = ({
             Transaction Details
           </h3>
 
-          <div className="text-xs sm:text-sm lg:text-base mt-3">
-            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2 gap-2 mb-2">
-              <span className="font-semibold">Date: </span>
-              <span className="">March 13, 2023</span>
+          <div className="text-xs sm:text-sm lg:text-base mt-3 space-y-2">
+            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2">
+              <span className="font-semibold">Date:</span>
+              <span>{formatDate(currentRecord?.createdAt)}</span>
             </div>
 
-            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2 gap-2 mb-2">
-              <span className="font-semibold">Method:</span>
-              <span>Photography</span>
+            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2">
+              <span className="font-semibold">Client Name:</span>
+              <span>{currentRecord?.userId?.name}</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2 gap-2 mb-2">
-              <span className="font-semibold">Transaction ID: </span>
-              <span>4646123456789</span>
+            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2">
+              <span className="font-semibold">Professional Name:</span>
+              <span>{currentRecord?.serviceProviderId?.name}</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2 gap-2 mb-2">
-              <span className="font-semibold">Payment Method: </span>
-              <span>Card</span>
+
+            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2">
+              <span className="font-semibold text-nowrap">
+                Transaction ID:{" "}
+              </span>
+              <span className="text-wrap max-w-[200px] lg:max-w-[350px]">
+                {currentRecord?.transactionId}
+              </span>
             </div>
-            <div className="flex items-center justify-between pb-2 gap-2 mb-2 font-bold">
-              <span className=" text-secondary-color">Amount: </span>
-              <span className="text-success">$200</span>
+
+            <div className="flex items-center justify-between border-b border-[#E1E1E1] pb-2">
+              <span className="font-semibold">Payment Method:</span>
+              <span>{currentRecord?.paymentMethod}</span>
+            </div>
+
+            <div className="flex items-center justify-between font-bold">
+              <span className="text-secondary-color">Amount:</span>
+              <span className="text-success">${currentRecord?.amount}</span>
             </div>
           </div>
-          <div className="flex items-center justify-center">
+
+          <div className="flex items-center justify-center mt-5">
             <ReuseButton
               variant="secondary"
-              className="!px-5 !py-4 !w-fit  gap-2"
+              className="!px-5 !py-4 !w-fit gap-2"
             >
               Download Invoice
             </ReuseButton>

@@ -4,80 +4,36 @@ import AdminAllDeliveryManagementTable from "../../ui/Tables/AdminAllDeliveryMan
 import DeliveryManagementMakePaymentModal from "../../ui/Modal/DeliveryManagement/DeliveryManagementMakePaymentModal";
 import ReusableTabs from "../../ui/ReusableTabs";
 import AdminGearDeliveryTable from "../../ui/Tables/AdminGearDeliveryTable";
+import { useGetDeliveryManagementQuery } from "../../redux/features/deliveryManagement/deliveryManagementApi";
+import { IDeliveryManagement } from "../../types/deliveryManagement.type";
 
 const AdminDeliveryManagement = () => {
-  const deliveryManagementPhotographyData = Array.from({ length: 20 }).map(
-    (_, index) => {
-      const deliveryStatus =
-        index % 3 === 0
-          ? "Delivered"
-          : index % 3 === 1
-          ? "In Progress"
-          : "Pending";
-
-      const paymentStatus =
-        deliveryStatus === "Pending"
-          ? "Unpaid"
-          : deliveryStatus === "In Progress"
-          ? "Unpaid"
-          : "Paid";
-
-      return {
-        orderId: index + 1,
-        clientName: "Lívia Nováková",
-        service: "Wedding Photography",
-        photographer_videographer: "Lívia Nováková",
-        orderType: "Direct",
-        amount: "$200",
-        deliveryDate: "24 May, 2025",
-        deliveryStatus,
-        paymentStatus,
-      };
-    }
+  const [activeTab, setActiveTab] = useState<"professional" | "gear">(
+    "professional"
   );
-
-  const deliveryManagementGearData = Array.from({ length: 20 }).map(
-    (_, index) => {
-      const deliveryStatus =
-        index % 3 === 0
-          ? "Delivered"
-          : index % 3 === 1
-          ? "In Progress"
-          : "Pending";
-
-      const paymentStatus =
-        deliveryStatus === "Pending"
-          ? "Unpaid"
-          : deliveryStatus === "In Progress"
-          ? "Unpaid"
-          : "Paid";
-
-      return {
-        orderId: index + 1,
-        clientName: "Lívia Nováková",
-        itemName: "Camera Lens",
-        sellerName: "Lívia Nováková",
-        amount: "$200",
-        deliveryDate: "24 May, 2025",
-        deliveryStatus,
-        paymentStatus,
-      };
-    }
-  );
-
-  const [activeTab, setActiveTab] = useState<"photographyVideography" | "gear">(
-    "photographyVideography"
-  );
-
-  const tableData =
-    activeTab === "photographyVideography"
-      ? deliveryManagementPhotographyData
-      : deliveryManagementGearData;
 
   const [showViewPaymentModal, setShowViewPaymentModal] = useState(false);
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
+
+  const { data, isFetching } = useGetDeliveryManagementQuery(
+    {
+      limit: 12,
+      page,
+      searchTerm: searchText,
+      type: activeTab,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  console.log(data);
+
+  const total = data?.data?.meta?.total || 0;
+
+  const orders: IDeliveryManagement[] = data?.data?.orders || [];
+  console.log(orders);
 
   const showPayment = () => {
     setShowViewPaymentModal(true);
@@ -99,20 +55,20 @@ const AdminDeliveryManagement = () => {
         </div>
       </div>
 
-      <ReusableTabs<"photographyVideography" | "gear">
+      <ReusableTabs<"professional" | "gear">
         align="left"
         tabs={[
           {
             label: "Photography & Videography",
-            value: "photographyVideography",
+            value: "professional",
             content: (
               <AdminAllDeliveryManagementTable
-                data={tableData}
-                loading={false}
+                data={orders}
+                loading={isFetching}
                 showViewPaymentModal={showPayment}
                 setPage={setPage}
                 page={page}
-                total={tableData.length}
+                total={total}
                 limit={limit}
               />
             ),
@@ -123,12 +79,12 @@ const AdminDeliveryManagement = () => {
             value: "gear",
             content: (
               <AdminGearDeliveryTable
-                data={tableData}
+                data={orders}
                 loading={false}
                 showViewPaymentModal={showPayment}
                 setPage={setPage}
                 page={page}
-                total={tableData.length}
+                total={total}
                 limit={limit}
               />
             ),

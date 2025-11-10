@@ -3,16 +3,17 @@ import React from "react";
 import { Space, Tooltip } from "antd";
 import { GoEye } from "react-icons/go";
 import ReuseTable from "../../utils/ReuseTable";
+import { ITransaction } from "../../types";
 
 // Define the type for the props
 interface TransactionTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: ITransaction[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewModal: (record: any) => void; // Function to handle viewing a user
-  setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  showViewModal: (record: ITransaction) => void; // Function to handle viewing a user
+  setPage: (page: number) => void; // Function to handle pagination
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -29,36 +30,49 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       title: "UID",
       dataIndex: "id",
       key: "id",
+      render: (_: any, __: any, index: number) =>
+        page * limit - limit + index + 1,
     },
     {
       title: "Client Name",
-      dataIndex: "clientName",
+      dataIndex: ["userId", "name"],
       key: "clientName",
+      render: (_: any, record: ITransaction) => record?.userId?.name,
+    },
+    {
+      title: "Professional Name",
+      dataIndex: ["serviceProviderId", "name"],
+      key: "serviceProviderId",
+      render: (_: any, record: ITransaction) => record?.serviceProviderId?.name,
     },
     {
       title: "Method",
-      dataIndex: "method",
+      dataIndex: "paymentMethod",
       key: "method",
+      render: (_: any, record: ITransaction) => record?.paymentMethod,
     },
     {
       title: "Transaction ID",
-      dataIndex: "transactiohnId",
-      key: "transactiohnId",
+      dataIndex: "transactionId",
+      key: "transactionId",
     },
     {
       title: "Commission Amount",
-      dataIndex: "commissionAmount",
+      dataIndex: "commission",
       key: "commissionAmount",
+      render: (_: any, record: ITransaction) => `$${record?.commission}`,
     },
     {
       title: "Date",
-      dataIndex: "date",
+      dataIndex: "createdAt",
       key: "date",
+      render: (_: any, record: ITransaction) =>
+        new Date(record?.createdAt).toLocaleString(),
     },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: ITransaction) => (
         <Space size="middle">
           {/* View Details Tooltip */}
           <Tooltip placement="right" title="View Details">

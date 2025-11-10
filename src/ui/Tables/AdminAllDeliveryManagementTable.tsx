@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import ReuseTable from "../../utils/ReuseTable";
 import { Tooltip } from "antd";
 import ReuseButton from "../Button/ReuseButton";
+import { IDeliveryManagement } from "../../types/deliveryManagement.type";
 
 // Define the type for the props
 interface AdminAllDeliveryManagementTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IDeliveryManagement[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
   showViewPaymentModal: () => void; // Function to handle viewing payment details
-  setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  setPage: (page: number) => void; // Function to handle pagination
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const AdminAllDeliveryManagementTable: React.FC<
@@ -23,57 +23,76 @@ const AdminAllDeliveryManagementTable: React.FC<
       title: "Order ID",
       dataIndex: "orderId",
       key: "orderId",
+      render: (_: unknown, __: unknown, index: number) =>
+        page * limit - limit + index + 1,
     },
     {
       title: "Client Name",
-      dataIndex: "clientName",
+      dataIndex: "userId",
       key: "clientName",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        record?.userId?.name || "N/A",
     },
     {
       title: "Photographer/Videographer",
-      dataIndex: "photographer_videographer",
+      dataIndex: "serviceProviderId",
       key: "photographer_videographer",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        record?.serviceProviderId?.name || "N/A",
     },
     {
       title: "Order Type",
       dataIndex: "orderType",
       key: "orderType",
+      render: (text: string) => text.charAt(0).toUpperCase() + text.slice(1),
     },
     {
       title: "Amount",
-      dataIndex: "amount",
+      dataIndex: "totalPrice",
       key: "amount",
+      render: (amount: number) => `$${amount}`,
     },
     {
       title: "Delivery Date",
       dataIndex: "deliveryDate",
       key: "deliveryDate",
+      render: (date: string) =>
+        date ? new Date(date).toLocaleDateString() : "N/A",
     },
     {
       title: "Delivery Status",
-      dataIndex: "deliveryStatus",
+      dataIndex: "status",
       key: "deliveryStatus",
+      render: (status: string) => (
+        <span
+          className={`${
+            status === "delivered" ? "text-success" : "text-warning"
+          } font-semibold`}
+        >
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      ),
     },
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      render: (text: string) => (
+      render: (status: string) => (
         <span
           className={`${
-            text === "Paid" ? "text-success" : "text-error"
+            status === "Paid" ? "text-success" : "text-error"
           } font-semibold`}
         >
-          {text}
+          {status}
         </span>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: IDeliveryManagement) => (
         <div>
-          {record?.paymentStatus === "Paid" ? (
+          {record?.paymentStatus === "Unpaid" ? (
             <Tooltip placement="right" title="View Details">
               <ReuseButton
                 variant="secondary"

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import AllUserTable from "../../ui/Tables/UserTable";
 import UserModal from "../../ui/Modal/User/UserModal";
@@ -9,115 +8,60 @@ import ReusableTabs from "../../ui/ReusableTabs";
 import UserProfessionalTable from "../../ui/Tables/UserProfessionalTable";
 import UserViewPortfolioModal from "../../ui/Modal/User/UserViewPortfolioModal";
 import AdminUsersManagementOverview from "../../Components/Dashboard/AdminUsers/AdminUsersManagementOverview";
+import {
+  useBlockAndUnblockUserMutation,
+  useGetAllUsersQuery,
+} from "../../redux/features/users/usersApi";
+import { IUser } from "../../types";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 const AdminAllUsers = () => {
-  const photographerData = Array.from({ length: 20 }).map((_, index) => {
-    const names = [
-      "Lívia Nováková",
-      "Mária Kováčová",
-      "Jana Horváthová",
-      "Petra Šimková",
-      "Ivana Dvořáková",
-      "Zuzana Blažková",
-      "Anna Vargová",
-      "Martina Fialová",
-      "Lucia Novotná",
-      "Barbora Krajčírová",
-    ];
-
-    const roles = [
-      "Photographer",
-      "Videographer",
-      "Photographer &Videographer",
-    ] as const;
-
-    type RoleType = (typeof roles)[number];
-
-    const specializations: Record<RoleType, string> = {
-      Photographer: "Wedding Photographer",
-      Videographer: "Wedding Videographer",
-      "Photographer &Videographer":
-        "Wedding Videographer/ Wedding Photographer",
-    };
-
-    const name = names[index % names.length];
-    const role: RoleType = roles[index % roles.length];
-
-    return {
-      id: 1223 + index,
-      name,
-      role,
-      specializations: specializations[role],
-      joinDate: "24 May, 2025",
-      orders: 30,
-      gearOrders: 4,
-      earnings: "$20000",
-      workshops: 3,
-      status: "Active",
-    };
-  });
-
-  const clientData = Array.from({ length: 20 }).map((_, index) => {
-    const clientNames = [
-      "Kristína Černý",
-      "Lucie Marešová",
-      "Eva Bartošová",
-      "Tereza Hrubá",
-      "Alena Králová",
-      "Jitka Malá",
-      "Veronika Procházková",
-      "Karolína Pavlíková",
-      "Monika Urbanová",
-      "Šárka Benešová",
-    ];
-
-    return {
-      id: 1223 + index,
-      name: clientNames[index % clientNames.length],
-      role: "Client",
-      joinDate: "24 May, 2025",
-      photoVideoOrders: 2 + (index % 5), // varying between 2 and 6
-      gearOrders: 20 + (index % 3), // varying between 20 and 22
-      totalSpent: "$20000",
-      workshopsJoined: 3,
-      status: "Active",
-    };
-  });
-
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   console.log(searchText);
 
   const limit = 12;
 
-  const [activeTab, setActiveTab] = useState<"professional" | "client">(
+  const [activeTab, setActiveTab] = useState<"professional" | "user">(
     "professional"
   );
 
-  const tableData =
-    activeTab === "professional" ? photographerData : clientData;
+  const { data, isFetching } = useGetAllUsersQuery(
+    {
+      limit,
+      page,
+      searchTerm: searchText,
+      type: activeTab,
+    },
+    { refetchOnMountOrArgChange: true }
+  );
+  const userData = data?.data;
+  const total = data?.meta?.total || 0;
+
+  const [blockAndUnblock] = useBlockAndUnblockUserMutation();
+
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isViewProtfolioModalVisible, setIsViewProtfolioModalVisible] =
     useState(false);
   const [isBlockModalVisible, setIsBlockModalVisible] = useState(false);
   const [isUnblockModalVisible, setIsUnblockModalVisible] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState<any | null>(null);
+  const [currentRecord, setCurrentRecord] = useState<IUser | null>(null);
 
-  const showViewUserModal = (record: any) => {
+  const showViewUserModal = (record: IUser) => {
     setCurrentRecord(record);
     setIsViewModalVisible(true);
   };
 
-  const showViewPortfolioModal = (record: any) => {
+  const showViewPortfolioModal = (record: IUser) => {
     setCurrentRecord(record);
     setIsViewProtfolioModalVisible(true);
   };
 
-  const showBlockModal = (record: any) => {
+  const showBlockModal = (record: IUser) => {
     setCurrentRecord(record);
     setIsBlockModalVisible(true);
   };
-  const showUnblockModal = (record: any) => {
+  const showUnblockModal = (record: IUser) => {
     setCurrentRecord(record);
     setIsUnblockModalVisible(true);
   };
@@ -130,13 +74,29 @@ const AdminAllUsers = () => {
     setCurrentRecord(null);
   };
 
-  const handleBlock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleBlock = async (record: IUser) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblock,
+      {
+        params: record?._id,
+      },
+      "Blocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
-  const handleUnblock = (record: any) => {
-    handleCancel();
-    console.log(record);
+  const handleUnblock = async (record: IUser) => {
+    const res = await tryCatchWrapper(
+      blockAndUnblock,
+      {
+        params: record?._id,
+      },
+      "Unblocking..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
   };
   return (
     <div className=" bg-primary-color rounded-xl p-4 min-h-[90vh]">
@@ -157,7 +117,7 @@ const AdminAllUsers = () => {
         <AdminUsersManagementOverview />
       </div>
 
-      <ReusableTabs<"professional" | "client">
+      <ReusableTabs<"professional" | "user">
         align="left"
         tabs={[
           {
@@ -165,31 +125,31 @@ const AdminAllUsers = () => {
             value: "professional",
             content: (
               <UserProfessionalTable
-                data={tableData}
-                loading={false}
+                data={userData}
+                loading={isFetching}
                 showViewModal={showViewUserModal}
                 showBlockModal={showBlockModal}
                 showUnblockModal={showUnblockModal}
                 setPage={setPage}
                 page={page}
-                total={tableData.length}
+                total={total}
                 limit={limit}
               />
             ),
           },
           {
             label: "Clients",
-            value: "client",
+            value: "user",
             content: (
               <AllUserTable
-                data={tableData}
-                loading={false}
+                data={userData}
+                loading={isFetching}
                 showViewModal={showViewUserModal}
                 showBlockModal={showBlockModal}
                 showUnblockModal={showUnblockModal}
                 setPage={setPage}
                 page={page}
-                total={tableData.length}
+                total={total}
                 limit={limit}
               />
             ),

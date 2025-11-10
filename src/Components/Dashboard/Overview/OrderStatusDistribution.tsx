@@ -1,7 +1,20 @@
+import React from "react";
 import ReuseSelect from "../../../ui/Form/ReuseSelect";
 import OrderStatusChart from "../../Chart/OrderStatusChart";
+import { useGetOrderStatsQuery } from "../../../redux/features/overview/overviewApi";
 
 const OrderStatusDistribution = () => {
+  const [selectedOption, setSelectedOption] = React.useState("photographer");
+  const { data } = useGetOrderStatsQuery(
+    {
+      type: selectedOption,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  console.log(data);
   return (
     <div className="w-full lg:w-1/2 p-3 bg-[#FFFFFF] rounded-lg flex flex-col border border-[#E1E1E1]">
       <div className="flex justify-between text-base-color mt-4">
@@ -10,15 +23,17 @@ const OrderStatusDistribution = () => {
         </p>
         <div>
           <ReuseSelect
+            onChange={(e) => setSelectedOption(e)}
+            value={selectedOption}
             selectClassName="!w-[160px]"
             name="orderStatus"
             options={[
               {
-                value: "photography",
+                value: "photographer",
                 label: "Photography",
               },
               {
-                value: "videography",
+                value: "videographer",
                 label: "Videography",
               },
               {
@@ -31,7 +46,7 @@ const OrderStatusDistribution = () => {
       </div>
       <hr />
       <div>
-        <OrderStatusChart />
+        <OrderStatusChart data={data?.data} />
       </div>
     </div>
   );

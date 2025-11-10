@@ -9,27 +9,12 @@ import {
 } from "recharts";
 
 // Define the structure of each data point in the chart
-interface ChartData {
-  month: string;
-  earnings: number;
-}
 
-const data: ChartData[] = [
-  { month: "Jan", earnings: 5000 },
-  { month: "Feb", earnings: 6000 },
-  { month: "Mar", earnings: 7000 },
-  { month: "Apr", earnings: 8000 },
-  { month: "May", earnings: 9000 },
-  { month: "Jun", earnings: 10000 },
-  { month: "Jul", earnings: 11000 },
-  { month: "Aug", earnings: 12000 },
-  { month: "Sep", earnings: 13000 },
-  { month: "Oct", earnings: 1400 },
-  { month: "Nov", earnings: 15000 },
-  { month: "Dec", earnings: 16000 },
-];
-
-const Bar_Chart = () => {
+const Bar_Chart = ({
+  monthlyCommission,
+}: {
+  monthlyCommission: { month: string; totalCommission: number }[];
+}) => {
   // Custom tooltip to display the information
 
   // Custom tick style for X and Y axes
@@ -39,7 +24,7 @@ const Bar_Chart = () => {
     <div className="w-full h-80">
       <ResponsiveContainer>
         <BarChart
-          data={data}
+          data={monthlyCommission}
           margin={{
             top: 10,
             right: 20,
@@ -80,7 +65,7 @@ const Bar_Chart = () => {
           <ReferenceLine y={50} stroke="#20202055" />
           <ReferenceLine y={60} stroke="#20202055" />
           <Bar
-            dataKey="earnings"
+            dataKey="totalCommission"
             fill="url(#incomeGradient)" // Bar color
             barSize={20} // Width of each bar
             radius={[10, 10, 10, 10]} // Rounded corners for bars

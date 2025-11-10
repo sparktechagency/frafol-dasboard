@@ -1,4 +1,7 @@
 export * from "./auth.type";
+export * from "./users.type";
+export * from "./earning.type";
+export * from "./report.type";
 export * from "./approvals.type";
 export * from "./feedback.type";
 export * from "./gear.type";

@@ -3,10 +3,11 @@ import React from "react";
 import ReuseTable from "../../utils/ReuseTable";
 import { Tooltip } from "antd";
 import ReuseButton from "../Button/ReuseButton";
+import { IDeliveryManagement } from "../../types/deliveryManagement.type";
 
 // Define the type for the props
 interface AdminGearDeliveryTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IDeliveryManagement[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
   showViewPaymentModal: () => void; // Function to handle viewing payment details
   setPage?: (page: number) => void; // Function to handle pagination
@@ -34,53 +35,75 @@ const AdminGearDeliveryTable: React.FC<AdminGearDeliveryTableProps> = ({
       title: "Client Name",
       dataIndex: "clientName",
       key: "clientName",
+      render: (_: unknown, record: any) => record?.clientId?.name || "N/A",
     },
     {
       title: "Item Name",
       dataIndex: "itemName",
       key: "itemName",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        record?.gearMarketplaceId?.name || record?.serviceType || "N/A",
     },
     {
       title: "Seller Name",
       dataIndex: "sellerName",
       key: "sellerName",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        record?.sellerId?.name || record?.serviceProviderId?.name || "N/A",
     },
-
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        `$${record?.gearMarketplaceId?.price || record?.price || 0}`,
     },
     {
       title: "Delivery Date",
       dataIndex: "deliveryDate",
       key: "deliveryDate",
+      render: (_: unknown, record: IDeliveryManagement) =>
+        record?.deliveryDate
+          ? new Date(record.deliveryDate).toLocaleDateString()
+          : "N/A",
     },
     {
       title: "Delivery Status",
       dataIndex: "deliveryStatus",
       key: "deliveryStatus",
+      render: (_: unknown, record: IDeliveryManagement) => (
+        <span
+          className={`${
+            record?.orderStatus === "delivered" ||
+            record?.status === "delivered"
+              ? "text-success"
+              : "text-warning"
+          } font-semibold`}
+        >
+          {record?.orderStatus || "N/A"}
+        </span>
+      ),
     },
     {
       title: "Payment Status",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
-      render: (text: string) => (
+      render: (_: unknown, record: IDeliveryManagement) => (
         <span
           className={`${
-            text === "Paid" ? "text-success" : "text-error"
+            record?.paymentStatus === "pending" ? "text-success" : "text-error"
           } font-semibold`}
         >
-          {text}
+          {record?.paymentStatus || "N/A"}
         </span>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: any) => (
+      render: (_: unknown, record: IDeliveryManagement) => (
         <div>
-          {record?.paymentStatus === "Paid" ? (
+          {record?.paymentStatus === "pending" ? (
             <Tooltip placement="right" title="View Details">
               <ReuseButton
                 variant="secondary"

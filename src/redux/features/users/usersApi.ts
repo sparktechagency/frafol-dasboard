@@ -8,10 +8,9 @@ const UsersApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.users],
     }),
     getAllUsers: builder.query({
-      query: ({ page, limit, searchTerm }) => ({
-        url: `/users`,
+      query: ({ page, limit, searchTerm, type }) => ({
+        url: `/users/all-users?page=${page}&limit=${limit}&searchTerm=${searchTerm}&type=${type}`,
         method: "GET",
-        params: { page, limit, searchTerm },
       }),
       providesTags: [tagTypes.users],
     }),
@@ -38,6 +37,14 @@ const UsersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.users],
     }),
+    blockAndUnblockUser: builder.mutation({
+      query: (req) => ({
+        url: `/users/block/${req.params}`,
+        method: "PATCH",
+        body: req.body,
+      }),
+      invalidatesTags: [tagTypes.users],
+    }),
   }),
 });
 
@@ -47,4 +54,5 @@ export const {
   useGetAllPendingProfessionalsQuery,
   useApproveProfessionalMutation,
   useDeclineProfessionalMutation,
+  useBlockAndUnblockUserMutation,
 } = UsersApi;

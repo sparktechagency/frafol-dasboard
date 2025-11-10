@@ -5,18 +5,19 @@ import { GoEye } from "react-icons/go";
 import { CgUnblock } from "react-icons/cg";
 import { MdBlock } from "react-icons/md";
 import ReuseTable from "../../utils/ReuseTable";
+import { IUser } from "../../types";
 
 // Define the type for the props
 interface UserProfessionalTableProps {
-  data: any[]; // Replace `unknown` with the actual type of your data array
+  data: IUser[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewModal: (record: any) => void; // Function to handle viewing a user
-  showBlockModal: (record: any) => void; // Function to handle blocking a user
-  showUnblockModal: (record: any) => void; // Function to handle unblocking a user
-  setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  showViewModal: (record: IUser) => void; // Function to handle viewing a user
+  showBlockModal: (record: IUser) => void; // Function to handle blocking a user
+  showUnblockModal: (record: IUser) => void; // Function to handle unblocking a user
+  setPage: (page: number) => void; // Function to handle pagination
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
@@ -33,55 +34,80 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "_id",
+      key: "_id",
+      render: (_: any, __: any, index: number) =>
+        page * limit - limit + index + 1,
+    },
+    {
+      title: "Profile ID",
+      dataIndex: "profileId",
+      key: "profileId",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text: string, record: IUser) => (
+        <span>
+          {text} {record.sureName}
+        </span>
+      ),
+    },
+    {
+      title: "Company Name",
+      dataIndex: "companyName",
+      key: "companyName",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
+      render: (role: string) => (
+        <span className="capitalize">
+          {role === "both" ? "Photographer & Videographer" : role || "—"}
+        </span>
+      ),
     },
     {
       title: "Specializations",
-      dataIndex: "specializations",
+      dataIndex: "videographerSpecializations",
       key: "specializations",
+      render: (arr: string[]) => (arr?.length ? arr.join(", ") : "—"),
     },
     {
       title: "Join Date",
-      dataIndex: "joinDate",
-      key: "joinDate",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Photography/Videography Orders",
-      dataIndex: "orders",
-      key: "orders",
+      title: "Min Hourly Rate",
+      dataIndex: "minHourlyRate",
+      key: "minHourlyRate",
+      render: (val: number) => `€${val.toLocaleString()}`,
     },
     {
-      title: "Gear Orders",
-      dataIndex: "gearOrders",
-      key: "gearOrders",
-    },
-    {
-      title: "Total Earning",
-      dataIndex: "earnings",
-      key: "earnings",
-    },
-    {
-      title: "Active Workshops",
-      dataIndex: "workshops",
-      key: "workshops",
+      title: "Max Hourly Rate",
+      dataIndex: "maxHourlyRate",
+      key: "maxHourlyRate",
+      render: (val: number) => `€${val.toLocaleString()}`,
     },
     {
       title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => (
-        <span className="text-green-600 font-medium">{status}</span>
+      dataIndex: "isBlocked",
+      key: "isBlocked",
+      render: (isBlocked: string) => (
+        <span
+          className={`font-medium ${isBlocked ? "text-error" : "text-success"}`}
+        >
+          {isBlocked ? "Blocked" : "Active"}
+        </span>
       ),
     },
     {
@@ -100,24 +126,25 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
           </Tooltip>
 
           {/* Block User Tooltip */}
-
-          <Tooltip placement="left" title="Unblock this User">
-            <button
-              className="!p-0 !bg-transparent !border-none !text-base-color"
-              onClick={() => showUnblockModal(record)}
-            >
-              <CgUnblock style={{ fontSize: "24px" }} />
-            </button>
-          </Tooltip>
-
-          <Tooltip placement="left" title="Block this User">
-            <button
-              className="!p-0 !bg-transparent !border-none !text-error-color"
-              onClick={() => showBlockModal(record)}
-            >
-              <MdBlock style={{ fontSize: "24px" }} />
-            </button>
-          </Tooltip>
+          {record.isBlocked ? (
+            <Tooltip placement="left" title="Unblock this User">
+              <button
+                className="!p-0 !bg-transparent !border-none !text-base-color"
+                onClick={() => showUnblockModal(record)}
+              >
+                <CgUnblock style={{ fontSize: "24px" }} />
+              </button>
+            </Tooltip>
+          ) : (
+            <Tooltip placement="left" title="Block this User">
+              <button
+                className="!p-0 !bg-transparent !border-none !text-error-color"
+                onClick={() => showBlockModal(record)}
+              >
+                <MdBlock style={{ fontSize: "24px" }} />
+              </button>
+            </Tooltip>
+          )}
         </Space>
       ),
       align: "center",

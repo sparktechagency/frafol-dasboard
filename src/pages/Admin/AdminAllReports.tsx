@@ -3,21 +3,28 @@ import { useState } from "react";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import ReportsTable from "../../ui/Tables/ReportsTable";
 import AdminViewReviewModal from "../../ui/Modal/Review/AdminViewReviewModal";
+import { useGetAllReportsQuery } from "../../redux/features/report/reportApi";
+import { IReport } from "../../types";
 
 const AdminAllReports = () => {
-  const allReportsData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      name: "Lívia Nováková",
-      role: "Photographer",
-      issue: `The upload speed is painfully slow, making it impossible...`,
-      date: new Date().toLocaleDateString(),
-    };
-  });
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
+
+  const { data, isFetching } = useGetAllReportsQuery(
+    {
+      limit,
+      page,
+      searchTerm: searchText,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  console.log(data);
+
+  const allReviews: IReport[] = data?.data?.result || [];
+  const total = data?.data?.meta?.total || 0;
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any | null>(null);
 
@@ -46,12 +53,12 @@ const AdminAllReports = () => {
         </div>
       </div>
       <ReportsTable
-        data={allReportsData}
-        loading={false}
+        data={allReviews}
+        loading={isFetching}
         showViewModal={showViewUserModal}
         setPage={setPage}
         page={page}
-        total={allReportsData.length}
+        total={total}
         limit={limit}
       />
       <AdminViewReviewModal

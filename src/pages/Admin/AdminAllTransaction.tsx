@@ -3,22 +3,29 @@ import { useState } from "react";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import TransactionTable from "../../ui/Tables/TransactionTable";
 import TransactionViewModal from "../../ui/Modal/Transactions/TransactionViewModal";
+import { useGetEarningsQuery } from "../../redux/features/earning/earningApi";
 
 const AdminAllTransaction = () => {
-  const allTransactionData = Array.from({ length: 20 }).map((_, index) => {
-    return {
-      id: index + 1,
-      clientName: "Lívia Nováková",
-      method: "Credit Card",
-      transactiohnId: `TXN${index + 1000}`,
-      commissionAmount: (Math.random() * 100).toFixed(2),
-      date: new Date().toLocaleDateString(),
-    };
-  });
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
-  console.log(searchText);
+
+  const { data, isFetching } = useGetEarningsQuery(
+    {
+      limit,
+      page,
+      searchTerm: searchText,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const total = data?.data?.meta?.total || 0;
+
+  const payments: any = data?.data?.payments || [];
+
+  console.log(payments);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<any | null>(null);
 
@@ -47,12 +54,12 @@ const AdminAllTransaction = () => {
         </div>
       </div>
       <TransactionTable
-        data={allTransactionData}
-        loading={false}
+        data={payments}
+        loading={isFetching}
         showViewModal={showViewUserModal}
         setPage={setPage}
         page={page}
-        total={allTransactionData.length}
+        total={total}
         limit={limit}
       />
       <TransactionViewModal

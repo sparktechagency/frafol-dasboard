@@ -1,43 +1,44 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RiShoppingBag2Fill } from "react-icons/ri";
 import { HiUsers } from "react-icons/hi";
 import { MdAttachMoney } from "react-icons/md";
 
-const OverviewCards = () => {
+const OverviewCards = ({ stats }: any) => {
   const countData = [
     {
       id: 1,
       background: "#ffffff",
       name: "Total Users",
       icon: <HiUsers className="size-5 text-secondary-color" />,
-      count: 1000,
+      count: stats?.totalUsers || 0,
     },
     {
       id: 2,
       background: "#ffffff",
       name: "Regular Users",
       icon: <HiUsers className="size-5 text-secondary-color" />,
-      count: 800,
+      count: stats?.totalRegularUsers || 0,
     },
     {
       id: 3,
       background: "#ffffff",
       name: "Photographers/Videographers",
       icon: <HiUsers className="size-6 text-secondary-color" />,
-      count: 1500,
+      count: stats?.totalProfessionals || 0,
     },
     {
       id: 4,
       background: "#ffffff",
       name: "Active Orders",
       icon: <RiShoppingBag2Fill className="size-6 text-secondary-color" />,
-      count: 150,
+      count: stats?.activeEventOrders || 0,
     },
     {
       id: 4,
       background: "#ffffff",
       name: "Earrings From Commission",
       icon: <MdAttachMoney className="size-6 text-secondary-color" />,
-      count: "$150",
+      count: `${(stats?.totalCommission || 0).toLocaleString()}€`,
     },
   ];
   return (
@@ -52,7 +53,7 @@ const OverviewCards = () => {
           }}
         >
           <div className="!w-full">
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between w-full gap-2">
               <p className="text-sm sm:text-base lg:text-lg  font-semibold mb-1  tracking-tight w-full text-nowrap">
                 {item.name}
               </p>
@@ -61,10 +62,6 @@ const OverviewCards = () => {
             <p className="text-lg sm:text-xl lg:text-2xl  font-bold capitalize tracking-wider">
               {item.count}
             </p>
-            <p className="text-xs lg:text-sm capitalize tracking-wider mt-2 font-semibold">
-              <span className="text-success"> +12</span> from last month
-            </p>
-            {/* <div className="bg-[#FAF4FF] p-3 rounded-full">{item.icon}</div> */}
           </div>
         </div>
       ))}

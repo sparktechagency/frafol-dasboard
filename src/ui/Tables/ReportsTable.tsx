@@ -9,10 +9,10 @@ interface ReportsTableProps {
   data: any[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
   showViewModal: (record: any) => void; // Function to handle viewing a user
-  setPage?: (page: number) => void; // Function to handle pagination
-  page?: number;
-  total?: number;
-  limit?: number;
+  setPage: (page: number) => void; // Function to handle pagination
+  page: number;
+  total: number;
+  limit: number;
 }
 
 const ReportsTable: React.FC<ReportsTableProps> = ({
@@ -29,26 +29,35 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
       title: "UID",
       dataIndex: "id",
       key: "id",
+      render: (_: any, __: any, index: number) =>
+        page * limit - limit + index + 1,
     },
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "userId",
       key: "name",
+      render: (user: any) => `${user?.name} ${user?.sureName || ""}`,
     },
     {
       title: "Role",
-      dataIndex: "role",
+      dataIndex: "userId",
       key: "role",
+      render: (user: any) => {
+        return user?.role === "both"
+          ? "Photographer & Videographer"
+          : user?.role || "—";
+      },
     },
     {
       title: "Issue",
-      dataIndex: "issue",
+      dataIndex: "reason",
       key: "issue",
     },
     {
       title: "Date",
-      dataIndex: "date",
+      dataIndex: "createdAt",
       key: "date",
+      render: (date: string) => new Date(date).toLocaleDateString(), // Format date nicely
     },
     {
       title: "Action",
