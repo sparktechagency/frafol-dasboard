@@ -35,6 +35,8 @@ import AdminAllUsers from "../pages/Admin/AdminAllUsers";
 import AdminApprovals from "../pages/Admin/AdminApprovals";
 import AdminPackageManagement from "../pages/Admin/AdminPackageManagement";
 import ConversationPage from "../pages/Common/ConversationPage";
+import InteractionMessages from "../pages/Admin/InteractionManagement/InteractionMessages";
+import InteractionCommunityForum from "../pages/Admin/InteractionManagement/InteractionCommunityForum";
 
 export const adminPaths = [
   {
@@ -135,6 +137,27 @@ export const adminPaths = [
     key: "feedback",
     name: "Feedback",
     icon: feedbackLogo,
+  },
+  {
+    key: "interaction-management",
+    name: "Interaction",
+    icon: documentationLogo,
+    children: [
+      {
+        key: "message",
+        path: "interaction-management/message",
+        name: "Message",
+        icon: dashboardLogo,
+        element: <InteractionMessages />,
+      },
+      {
+        key: "community-form",
+        path: "interaction-management/community-form",
+        name: "Community Form",
+        icon: dashboardLogo,
+        element: <InteractionCommunityForum />,
+      },
+    ],
   },
   {
     key: "documentation",

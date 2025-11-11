@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import { useState } from "react";
 import { PieChart, Pie, Sector, Cell, Legend } from "recharts";
 
 const COLORS = ["#22c55e", "#f59e0b", "#ef4444"]; // green, amber, red
