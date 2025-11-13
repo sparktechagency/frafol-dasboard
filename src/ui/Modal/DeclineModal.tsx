@@ -9,6 +9,7 @@ interface DeclineModalProps<T> {
   handleCancel: () => void;
   currentRecord: T | null;
   handleDecline: (data: T, value: any) => void;
+  showInput?: boolean;
 }
 
 const DeclineModal: React.FC<DeclineModalProps<any>> = ({
@@ -16,6 +17,7 @@ const DeclineModal: React.FC<DeclineModalProps<any>> = ({
   handleCancel,
   currentRecord,
   handleDecline,
+  showInput = true,
 }) => {
   const [form] = Form.useForm();
   //   const [blockUser] = useBlockUserMutation();
@@ -39,14 +41,16 @@ const DeclineModal: React.FC<DeclineModalProps<any>> = ({
         form={form}
         handleFinish={(value: any) => handleDecline(currentRecord, value)}
       >
-        <ReuseInput
-          inputType="textarea"
-          name="reason"
-          labelClassName="!font-bold !text-base-color"
-          label="Reason for Decline"
-          placeholder="Enter reason for decline"
-          rules={[{ required: true, message: "Please input your name!" }]}
-        />
+        {showInput && (
+          <ReuseInput
+            inputType="textarea"
+            name="reason"
+            labelClassName="!font-bold !text-base-color"
+            label="Reason for Decline"
+            placeholder="Enter reason for decline"
+            rules={[{ required: true, message: "Please input your name!" }]}
+          />
+        )}
 
         <div
           style={{

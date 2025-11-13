@@ -14,6 +14,8 @@ export const tagTypes = {
   profile: "Profile",
   setting: "Setting",
   conversation: "Conversation",
+  interactionManagement: "InteractionManagement",
+  coupon: "Coupon",
 };
 
 export const tagTypesList = [
@@ -28,4 +30,10 @@ export const tagTypesList = [
   tagTypes.feedback,
   tagTypes.profile,
   tagTypes.setting,
+  tagTypes.conversation,
+  tagTypes.deliveryManagement,
+  tagTypes.earning,
+  tagTypes.interactionManagement,
+  tagTypes.report,
+  tagTypes.coupon,
 ];

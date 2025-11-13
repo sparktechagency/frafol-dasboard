@@ -1,20 +1,40 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import ReuseSearchInput from "../../../ui/Form/ReuseSearchInput";
 import InteractionCommunityForumTable from "../../../ui/Tables/InteractionCommunityForumTable";
 import ApprovalModal from "../../../ui/Modal/ApprovalModal";
 import DeclineModal from "../../../ui/Modal/DeclineModal";
+import {
+  useApproveCommunityForumMutation,
+  useDeclineCommunityForumMutation,
+  useGetInteractionCommunityForumQuery,
+} from "../../../redux/features/interactionManagement/interactionManagementApi";
+import ViewInteractionCommunityModal from "../../../ui/Modal/InteractionManagement/ViewInteractionCommunityModal";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
+import { IInteractionCommunity } from "../../../types";
 
 const InteractionCommunityForum = () => {
+  const [approveCommunityForum] = useApproveCommunityForumMutation();
+  const [declineCommunityForum] = useDeclineCommunityForumMutation();
+
   const limit = 12;
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
 
-  const total = 0;
+  const { data, isFetching } = useGetInteractionCommunityForumQuery(
+    {
+      limit,
+      page,
+      searchTerm: searchText,
+    },
+    { refetchOnMountOrArgChange: true }
+  );
 
-  const payments: any = [];
+  const allCommunity: any = data?.data;
+  console.log(allCommunity);
+  const total = data?.data?.meta?.total || 0;
 
-  console.log(payments);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
   const [isDeclineModalVisible, setIsDeclineModalVisible] = useState(false);
@@ -44,6 +64,35 @@ const InteractionCommunityForum = () => {
     setCurrentRecord(null);
   };
 
+  const handleApprove = async (record: IInteractionCommunity) => {
+    const res = await tryCatchWrapper(
+      approveCommunityForum,
+      {
+        params: record?._id,
+      },
+      "Approving..."
+    );
+
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
+  };
+  const handleDecline = async (
+    record: IInteractionCommunity | null,
+    _value: any
+  ) => {
+    const res = await tryCatchWrapper(
+      declineCommunityForum,
+      {
+        params: record?._id,
+      },
+      "Declining..."
+    );
+    if (res?.statusCode === 200) {
+      handleCancel();
+    }
+  };
+
   return (
     <div className=" bg-primary-color rounded-xl p-4 min-h-[90vh]">
       <div className="flex justify-between items-center mx-3 py-2 mb-5">
@@ -59,27 +108,33 @@ const InteractionCommunityForum = () => {
         </div>
       </div>
       <InteractionCommunityForumTable
-        data={payments}
-        loading={false}
-        showApproveModal={showApproveUserModal}
-        showDeclineModal={showDeclineUserModal}
+        data={allCommunity || []}
+        loading={isFetching}
         showViewModal={showViewUserModal}
         setPage={setPage}
         page={page}
         total={total}
         limit={limit}
       />
-      <ApprovalModal
-        isApprovalModalVisible={isApproveModalVisible}
+      <ViewInteractionCommunityModal
+        isViewModalVisible={isViewModalVisible}
         handleCancel={handleCancel}
         currentRecord={currentRecord}
-        handleApprove={() => {}}
+        showApproveModal={showApproveUserModal}
+        showDeclineModal={showDeclineUserModal}
+      />
+      <ApprovalModal
+        isApprovalModalVisible={isApproveModalVisible}
+        handleCancel={() => setIsApproveModalVisible(false)}
+        currentRecord={currentRecord}
+        handleApprove={handleApprove}
       />
       <DeclineModal
         isDeclineModalVisible={isDeclineModalVisible}
-        handleCancel={handleCancel}
+        handleCancel={() => setIsDeclineModalVisible(false)}
         currentRecord={currentRecord}
-        handleDecline={() => {}}
+        handleDecline={handleDecline}
+        showInput={false}
       />
     </div>
   );

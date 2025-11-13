@@ -1,18 +1,15 @@
 import React from "react";
 import { Space, Tooltip } from "antd";
 import ReuseTable from "../../utils/ReuseTable";
-import { IFeedback } from "../../types";
+import { IInteractionCommunity } from "../../types";
 import { formatDateTime } from "../../utils/dateFormet";
-import ReuseButton from "../Button/ReuseButton";
 import { GoEye } from "react-icons/go";
 
 // Define the type for the props
 interface InteractionCommunityForumTableProps {
-  data: IFeedback[]; // Replace `unknown` with the actual type of your data array
+  data: IInteractionCommunity[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewModal: (record: IFeedback) => void; // Function to handle viewing a user
-  showApproveModal: (record: IFeedback) => void; // Function to handle Approveing a user
-  showDeclineModal: (record: IFeedback) => void; // Function to handle Approveing a user
+  showViewModal: (record: IInteractionCommunity) => void; // Function to handle viewing a user
   setPage?: (page: number) => void; // Function to handle pagination
   page: number;
   total: number;
@@ -21,17 +18,7 @@ interface InteractionCommunityForumTableProps {
 
 const InteractionCommunityForumTable: React.FC<
   InteractionCommunityForumTableProps
-> = ({
-  data,
-  loading,
-  showViewModal,
-  showApproveModal,
-  showDeclineModal,
-  setPage,
-  page = 1,
-  total = 0,
-  limit,
-}) => {
+> = ({ data, loading, showViewModal, setPage, page = 1, total = 0, limit }) => {
   const columns = [
     {
       title: "UID",
@@ -42,41 +29,60 @@ const InteractionCommunityForumTable: React.FC<
     },
     {
       title: "Name",
-      dataIndex: "userId", // Assuming "userId" contains user info
-      key: "userId",
-      render: (_: unknown, record: IFeedback) =>
-        `${record?.userId.name} ${record?.userId.sureName}`, // Render user name and surname
+      dataIndex: "authorId", // Change from "userId" to "authorId"
+      key: "authorId",
+      render: (_: unknown, record: IInteractionCommunity) =>
+        `${record?.authorId.name}`, // Render author name
     },
     {
       title: "Role",
-      dataIndex: "userId",
+      dataIndex: "authorId", // Change from "userId" to "authorId"
       key: "role",
-      render: (_: unknown, record: IFeedback) => record?.userId.role, // Render the role from userId object
+      render: (_: unknown, record: IInteractionCommunity) =>
+        record?.authorId.role || "N/A", // Render role from authorId
     },
-    // {
-    //   title: "Role",
-    //   dataIndex: "userId",
-    //   key: "switchRole",
-    //   render: (_: unknown, record: IFeedback) => record?.userId.switchRole, // Render switchRole from userId
-    // },
     {
-      title: "Feedback",
-      dataIndex: "text", // Assuming "text" is the issue or content
+      title: "Title",
+      dataIndex: "title", // Render the title from the record
+      key: "title",
+      render: (title: string) => <p>{title}</p>,
+    },
+    {
+      title: "Content",
+      dataIndex: "text", // Render content or feedback from the record
       key: "text",
       render: (text: string) => (
         <p>{text.length > 50 ? `${text.substring(0, 50)}...` : text}</p>
-      ), // Truncate text if it's too long
+      ), // Truncate if the content is too long
     },
     {
       title: "Date",
-      dataIndex: "createdAt", // Assuming "createdAt" is the date field
+      dataIndex: "createdAt", // Render the date createdAt from the record
       key: "createdAt",
-      render: (createdAt: string) => formatDateTime(createdAt), // Format date
+      render: (createdAt: string) => formatDateTime(createdAt), // Use the formatDateTime function for formatting
+    },
+    {
+      title: "Status",
+      dataIndex: "approvalStatus", // Use approvalStatus from the record
+      key: "approvalStatus",
+      render: (approvalStatus: string) => (
+        <span
+          className={
+            approvalStatus === "approved"
+              ? "text-green-500"
+              : approvalStatus === "rejected"
+              ? "text-red-500"
+              : "text-yellow-500"
+          }
+        >
+          {approvalStatus.charAt(0).toUpperCase() + approvalStatus.slice(1)}
+        </span>
+      ), // Show the status with color coding for approved, pending, and rejected
     },
     {
       title: "Action",
       key: "action",
-      render: (_: unknown, record: IFeedback) => (
+      render: (_: unknown, record: IInteractionCommunity) => (
         <Space size="middle">
           <Tooltip placement="right" title="View Details">
             <button
@@ -87,24 +93,6 @@ const InteractionCommunityForumTable: React.FC<
             </button>
           </Tooltip>
           {/* Approve Details Tooltip */}
-          <Tooltip placement="right" title="Approve">
-            <ReuseButton
-              variant="secondary"
-              className="bg-success border-succebg-success"
-              onClick={() => showApproveModal(record)}
-            >
-              Approve
-            </ReuseButton>
-          </Tooltip>
-          <Tooltip placement="right" title="Decline">
-            <ReuseButton
-              variant="secondary"
-              className="bg-error border-error"
-              onClick={() => showDeclineModal(record)}
-            >
-              Decline
-            </ReuseButton>
-          </Tooltip>
         </Space>
       ),
       align: "center",

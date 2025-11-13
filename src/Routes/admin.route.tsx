@@ -37,6 +37,7 @@ import AdminPackageManagement from "../pages/Admin/AdminPackageManagement";
 import ConversationPage from "../pages/Common/ConversationPage";
 import InteractionMessages from "../pages/Admin/InteractionManagement/InteractionMessages";
 import InteractionCommunityForum from "../pages/Admin/InteractionManagement/InteractionCommunityForum";
+import AdminAllCupon from "../pages/Admin/AdminAllCupon";
 
 export const adminPaths = [
   {
@@ -129,6 +130,13 @@ export const adminPaths = [
     element: <AdminCommissionSetupPage />,
     key: "commission-setup",
     name: "Commission Setup",
+    icon: comissionLogo,
+  },
+  {
+    path: "coupon",
+    element: <AdminAllCupon />,
+    key: "coupon",
+    name: "Coupon",
     icon: comissionLogo,
   },
   {
