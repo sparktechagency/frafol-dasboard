@@ -11,6 +11,7 @@ import { Form } from "antd";
 import AdminCouponTable from "../../ui/Tables/AdminCouponTable";
 import AdminCreateCuponModal from "../../ui/Modal/AdminCupon/AdminCreateCuponModal";
 import AdminUpdateCuponModal from "../../ui/Modal/AdminCupon/AdminUpdateCuponModal";
+import { useGetCouponQuery } from "../../redux/features/coupon/couponApi";
 // import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 const AdminAllCupon = () => {
@@ -21,15 +22,16 @@ const AdminAllCupon = () => {
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
 
-  //   const { data, isFetching } = useGetCategoryQuery({
-  //     limit,
-  //     page,
-  //     searchTerm: searchText,
-  //   });
+  const { data, isFetching } = useGetCouponQuery({
+    limit,
+    page,
+    searchTerm: searchText,
+  });
 
-  const categoryData: any = [];
+  console.log(data);
+  const couponData: any = data?.data?.coupons || [];
 
-  console.log(categoryData, searchText);
+  const total = data?.data?.meta?.total || 0;
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
@@ -93,13 +95,13 @@ const AdminAllCupon = () => {
       </div>
 
       <AdminCouponTable
-        data={[]}
-        loading={false}
+        data={couponData}
+        loading={isFetching}
         showEditModal={showEditModal}
         showDeleteModal={showDeleteModal}
         setPage={setPage}
         page={page}
-        total={0}
+        total={total}
         limit={limit}
       />
 

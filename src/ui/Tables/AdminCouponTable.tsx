@@ -34,51 +34,50 @@ const AdminCouponTable: React.FC<AdminCouponTableProps> = ({
     },
     {
       title: "Discount",
-      dataIndex: "discount",
-      key: "discount",
+      dataIndex: "amount",
+      key: "amount",
       render: (value: number) => `€${value}`,
     },
     {
       title: "Min Spend",
-      dataIndex: "minSpend",
-      key: "minSpend",
+      dataIndex: "minimumSpend",
+      key: "minimumSpend",
       render: (value: number) => `€${value}`,
     },
     {
       title: "Usage",
-      dataIndex: "usage",
       key: "usage",
       render: (_: any, record: any) => (
-        <span>{`${record.used}/${record.limit}`}</span>
+        <span>{`${record.usedCount}/${record.limit}`}</span>
       ),
     },
     {
       title: "Status",
-      dataIndex: "status",
       key: "status",
-      render: (status: string) => {
-        let color = "";
-        switch (status.toLowerCase()) {
-          case "active":
-            color = "green";
-            break;
-          case "expired":
-            color = "red";
-            break;
-          case "inactive":
-            color = "gray";
-            break;
-          default:
-            color = "blue";
-        }
+      render: (_: any, record: any) => {
+        const isExpired =
+          new Date(record.expiryDate).getTime() < new Date().getTime();
+
+        const status = isExpired
+          ? "Expired"
+          : record.isActive
+          ? "Active"
+          : "Inactive";
+
+        const color =
+          status === "Active" ? "green" : status === "Expired" ? "red" : "gray";
+
         return <Tag color={color}>{status}</Tag>;
       },
     },
     {
       title: "Expiry",
-      dataIndex: "expiry",
-      key: "expiry",
-      render: (value: string) => value || "No Expiry",
+      dataIndex: "expiryDate",
+      key: "expiryDate",
+      render: (value: string) =>
+        value
+          ? new Date(value).toLocaleDateString("en-GB") // dd/mm/yyyy
+          : "No Expiry",
     },
     {
       title: "Active",

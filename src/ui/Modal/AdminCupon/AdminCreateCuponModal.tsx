@@ -4,8 +4,8 @@ import ReusableForm from "../../Form/ReuseForm";
 import ReuseInput from "../../Form/ReuseInput";
 import ReuseButton from "../../Button/ReuseButton";
 import tryCatchWrapper from "../../../utils/tryCatchWrapper";
-import { useAddCategoryMutation } from "../../../redux/features/category/categoryApi";
 import ReuseDatePicker from "../../Form/ReuseDatePicker";
+import { useAddCouponMutation } from "../../../redux/features/coupon/couponApi";
 interface AdminCreateCuponModalProps {
   isAddModalVisible: boolean;
   handleCancel: () => void;
@@ -17,22 +17,31 @@ const AdminCreateCuponModal: React.FC<AdminCreateCuponModalProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const [addCategory] = useAddCategoryMutation();
+  const [addCoupon] = useAddCouponMutation();
 
   const onSubmit = async (values: any) => {
-    const res = await tryCatchWrapper(
-      addCategory,
-      { body: values },
-      "Adding Category..."
-    );
+    const formattedValues = {
+      ...values,
+      amount: Number(values.amount),
+      limit: Number(values.limit),
+      minimumSpend: Number(values.minimumSpend),
+      expiryDate: values.expiryDate ? values.expiryDate.format() : null,
+    };
 
-    console.log(res);
+    console.log(formattedValues);
+
+    const res = await tryCatchWrapper(
+      addCoupon,
+      { body: formattedValues },
+      "Adding Coupon..."
+    );
 
     if (res?.statusCode === 201) {
       form.resetFields();
       handleCancel();
     }
   };
+
   return (
     <Modal
       open={isAddModalVisible}
@@ -55,7 +64,7 @@ const AdminCreateCuponModal: React.FC<AdminCreateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="discount"
+            name="amount"
             label="Discount Amount (€)"
             placeholder="0"
             type="number"
@@ -64,7 +73,7 @@ const AdminCreateCuponModal: React.FC<AdminCreateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="usageLimit"
+            name="limit"
             label="Usage Limit"
             placeholder="0"
             type="number"
@@ -73,7 +82,7 @@ const AdminCreateCuponModal: React.FC<AdminCreateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="minSpend"
+            name="minimumSpend"
             label="Minimum Spend (€)"
             placeholder="0"
             type="number"
@@ -82,7 +91,7 @@ const AdminCreateCuponModal: React.FC<AdminCreateCuponModalProps> = ({
           />
 
           <ReuseDatePicker
-            name="expiry"
+            name="expiryDate"
             label="Expiry Date (Optional)"
             placeholder="Select date"
           />

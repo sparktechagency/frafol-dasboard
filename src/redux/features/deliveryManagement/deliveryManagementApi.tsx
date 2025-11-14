@@ -10,6 +10,20 @@ const deliveryManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.deliveryManagement],
     }),
+    everOrderMakePayment: builder.mutation({
+      query: (req) => ({
+        url: `/event-order/complete-payment/${req.params}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: [tagTypes.deliveryManagement],
+    }),
+    gearOrderMakePayment: builder.mutation({
+      query: (req) => ({
+        url: `/gear-order/complete-payment/${req.params}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: [tagTypes.deliveryManagement],
+    }),
     // updateCommissionSetup: builder.mutation({
     //   query: (req) => ({
     //     url: `/commissionSetup/update`,
@@ -21,4 +35,8 @@ const deliveryManagementApi = baseApi.injectEndpoints({
   }),
 }); //commissionSetup
 
-export const { useGetDeliveryManagementQuery } = deliveryManagementApi;
+export const {
+  useGetDeliveryManagementQuery,
+  useEverOrderMakePaymentMutation,
+  useGearOrderMakePaymentMutation,
+} = deliveryManagementApi;

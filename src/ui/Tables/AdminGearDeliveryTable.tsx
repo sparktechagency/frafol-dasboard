@@ -9,7 +9,7 @@ import { IDeliveryManagement } from "../../types/deliveryManagement.type";
 interface AdminGearDeliveryTableProps {
   data: IDeliveryManagement[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewPaymentModal: () => void; // Function to handle viewing payment details
+  showViewPaymentModal: (record: IDeliveryManagement) => void; // Function to handle viewing payment details
   setPage?: (page: number) => void; // Function to handle pagination
   page?: number;
   total?: number;
@@ -91,10 +91,10 @@ const AdminGearDeliveryTable: React.FC<AdminGearDeliveryTableProps> = ({
       render: (_: unknown, record: IDeliveryManagement) => (
         <span
           className={`${
-            record?.paymentStatus === "pending" ? "text-success" : "text-error"
+            record?.paymentStatus === "pending" ? "text-error" : "text-success"
           } font-semibold`}
         >
-          {record?.paymentStatus || "N/A"}
+          {record?.paymentStatus === "pending" ? "Unpaid" : "Paid"}
         </span>
       ),
     },
@@ -104,24 +104,22 @@ const AdminGearDeliveryTable: React.FC<AdminGearDeliveryTableProps> = ({
       render: (_: unknown, record: IDeliveryManagement) => (
         <div>
           {record?.paymentStatus === "pending" ? (
-            <Tooltip placement="right" title="View Details">
+            <Tooltip placement="right" title="Make Payment">
               <ReuseButton
                 variant="secondary"
                 className="!p-0 !bg-warning !border-none !text-primary-color cursor-pointer !w-full !text-sm"
-                onClick={() => showViewPaymentModal()}
+                onClick={() => showViewPaymentModal(record)}
               >
                 Make Payment
               </ReuseButton>
             </Tooltip>
           ) : (
-            <Tooltip placement="right" title="View Details">
-              <ReuseButton
-                variant="outline"
-                className="!p-0  !border !border-success !text-success !cursor-default !w-full !text-sm"
-              >
-                Paid
-              </ReuseButton>
-            </Tooltip>
+            <ReuseButton
+              variant="outline"
+              className="!p-0  !border !border-success !text-success !cursor-default !w-full !text-sm"
+            >
+              Paid
+            </ReuseButton>
           )}
         </div>
       ),

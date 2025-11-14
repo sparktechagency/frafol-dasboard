@@ -26,31 +26,36 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
     if (currentRecord) {
       form.setFieldsValue({
         code: currentRecord.code,
-        discount: currentRecord.discount,
-        usageLimit: currentRecord.usageLimit,
-        minSpend: currentRecord.minSpend,
+        amount: currentRecord.amount,
+        limit: currentRecord.limit,
+        minimumSpend: currentRecord.minimumSpend,
         // Use Day.js to parse and format the date
-        expiry: currentRecord.expiry ? dayjs(currentRecord.expiry) : null,
+        expiryDate: currentRecord.expiryDate
+          ? dayjs(currentRecord.expiryDate)
+          : null,
       });
     }
   }, [currentRecord, form]);
 
   // Handle form submission
   const onSubmit = async (values: any) => {
-    // const payload = {
-    //   code: values.code,
-    //   discount: Number(values.discount),
-    //   usageLimit: Number(values.usageLimit),
-    //   minSpend: Number(values.minSpend),
-    //   // If there's an expiry, format it as an ISO string, otherwise set it as null
-    //   expiry: values.expiry ? values.expiry.toISOString() : null,
-    // };
+    const formattedValues = {
+      ...values,
+      amount: Number(values.amount),
+      limit: Number(values.limit),
+      minimumSpend: Number(values.minimumSpend),
+      expiryDate: values.expiryDate ? values.expiryDate.format() : null,
+    };
+
+    console.log(formattedValues);
+
     // const res = await tryCatchWrapper(
-    //   updateCoupon,
-    //   { body: payload, params: { id: currentRecord?._id } },
-    //   "Updating Coupon..."
+    //   addCoupon,
+    //   { body: formattedValues },
+    //   "Adding Coupon..."
     // );
-    // if (res?.statusCode === 200) {
+
+    // if (res?.statusCode === 201) {
     //   form.resetFields();
     //   handleCancel();
     // }
@@ -79,7 +84,7 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="discount"
+            name="amount"
             label="Discount Amount (€)"
             placeholder="0"
             type="number"
@@ -88,7 +93,7 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="usageLimit"
+            name="limit"
             label="Usage Limit"
             placeholder="0"
             type="number"
@@ -97,7 +102,7 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
           />
 
           <ReuseInput
-            name="minSpend"
+            name="minimumSpend"
             label="Minimum Spend (€)"
             placeholder="0"
             type="number"
@@ -106,7 +111,7 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
           />
 
           <ReuseDatePicker
-            name="expiry"
+            name="expiryDate"
             label="Expiry Date (Optional)"
             placeholder="Select expiry date"
             value={form.getFieldValue("expiry")}

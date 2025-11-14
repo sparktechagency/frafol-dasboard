@@ -8,7 +8,7 @@ import { IDeliveryManagement } from "../../types/deliveryManagement.type";
 interface AdminAllDeliveryManagementTableProps {
   data: IDeliveryManagement[]; // Replace `unknown` with the actual type of your data array
   loading: boolean;
-  showViewPaymentModal: () => void; // Function to handle viewing payment details
+  showViewPaymentModal: (record: IDeliveryManagement) => void; // Function to handle viewing payment details
   setPage: (page: number) => void; // Function to handle pagination
   page: number;
   total: number;
@@ -93,24 +93,22 @@ const AdminAllDeliveryManagementTable: React.FC<
       render: (_: unknown, record: IDeliveryManagement) => (
         <div>
           {record?.paymentStatus === "Unpaid" ? (
-            <Tooltip placement="right" title="View Details">
+            <Tooltip placement="right" title="Make Payment">
               <ReuseButton
                 variant="secondary"
                 className="!p-0 !bg-warning !border-none !text-primary-color cursor-pointer !w-full !text-sm"
-                onClick={() => showViewPaymentModal()}
+                onClick={() => showViewPaymentModal(record)}
               >
                 Make Payment
               </ReuseButton>
             </Tooltip>
           ) : (
-            <Tooltip placement="right" title="View Details">
-              <ReuseButton
-                variant="outline"
-                className="!p-0  !border !border-success !text-success !cursor-default !w-full !text-sm"
-              >
-                Paid
-              </ReuseButton>
-            </Tooltip>
+            <ReuseButton
+              variant="outline"
+              className="!p-0  !border !border-success !text-success !cursor-default !w-full !text-sm"
+            >
+              Paid
+            </ReuseButton>
           )}
         </div>
       ),

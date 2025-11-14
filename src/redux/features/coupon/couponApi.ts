@@ -4,15 +4,15 @@ import { tagTypes } from "../../tagTypes";
 const couponApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCoupon: builder.query({
-      query: ({ path }) => ({
-        url: `/category/type/${path}`,
+      query: () => ({
+        url: `/coupon`,
         method: "GET",
       }),
       providesTags: [tagTypes.coupon],
     }),
     addCoupon: builder.mutation({
       query: (req) => ({
-        url: `coupon`,
+        url: `/coupon`,
         method: "POST",
         body: req.body, // Passing the body from the request
       }),
