@@ -20,7 +20,15 @@ const couponApi = baseApi.injectEndpoints({
     }),
     updateCoupon: builder.mutation({
       query: (req) => ({
-        url: `/category/update/${req.params.id}`,
+        url: `/coupon/update/${req.params.id}`,
+        method: "PATCH",
+        body: req.body, // Passing the body from the request
+      }),
+      invalidatesTags: [tagTypes.coupon],
+    }),
+    updateStatus: builder.mutation({
+      query: (req) => ({
+        url: `/coupon/status/${req.params.id}`,
         method: "PATCH",
         body: req.body, // Passing the body from the request
       }),
@@ -28,7 +36,7 @@ const couponApi = baseApi.injectEndpoints({
     }),
     deleteCoupon: builder.mutation({
       query: (req) => ({
-        url: `/category/${req.params.id}`,
+        url: `/coupon/${req.params.id}`,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.coupon],
@@ -40,5 +48,6 @@ export const {
   useGetCouponQuery,
   useAddCouponMutation,
   useUpdateCouponMutation,
+  useUpdateStatusMutation,
   useDeleteCouponMutation,
 } = couponApi;

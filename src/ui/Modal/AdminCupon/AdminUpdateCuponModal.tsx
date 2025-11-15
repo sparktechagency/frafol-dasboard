@@ -6,6 +6,8 @@ import ReuseButton from "../../Button/ReuseButton";
 import ReuseDatePicker from "../../Form/ReuseDatePicker"; // Custom date picker component
 import dayjs from "dayjs"; // Import Day.js
 import { useEffect } from "react";
+import { useUpdateCouponMutation } from "../../../redux/features/coupon/couponApi";
+import tryCatchWrapper from "../../../utils/tryCatchWrapper";
 
 interface AdminUpdateCuponModalProps {
   isEditModalVisible: boolean;
@@ -19,7 +21,7 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
   currentRecord,
 }) => {
   const [form] = Form.useForm();
-  //   const [updateCoupon] = useUpdateCouponMutation();
+  const [updateCoupon] = useUpdateCouponMutation();
 
   // Set form fields when currentRecord is available
   useEffect(() => {
@@ -49,17 +51,17 @@ const AdminUpdateCuponModal: React.FC<AdminUpdateCuponModalProps> = ({
 
     console.log(formattedValues);
 
-    // const res = await tryCatchWrapper(
-    //   addCoupon,
-    //   { body: formattedValues },
-    //   "Adding Coupon..."
-    // );
+    const res = await tryCatchWrapper(
+      updateCoupon,
+      { body: formattedValues, params: { id: currentRecord?._id } },
+      "Updating Coupon..."
+    );
 
-    // if (res?.statusCode === 201) {
-    //   form.resetFields();
-    //   handleCancel();
-    // }
-    console.log(values);
+    if (res?.statusCode === 200) {
+      form.resetFields();
+      handleCancel();
+    }
+    console.log(res);
   };
 
   return (

@@ -38,6 +38,7 @@ import ConversationPage from "../pages/Common/ConversationPage";
 import InteractionMessages from "../pages/Admin/InteractionManagement/InteractionMessages";
 import InteractionCommunityForum from "../pages/Admin/InteractionManagement/InteractionCommunityForum";
 import AdminAllCupon from "../pages/Admin/AdminAllCupon";
+import AdminAllInsucance from "../pages/Admin/AdminAllInsucance";
 
 export const adminPaths = [
   {
@@ -144,6 +145,13 @@ export const adminPaths = [
     element: <AdminAllFeedback />,
     key: "feedback",
     name: "Feedback",
+    icon: feedbackLogo,
+  },
+  {
+    path: "insurance",
+    element: <AdminAllInsucance />,
+    key: "insurance",
+    name: "Insurance Requests",
     icon: feedbackLogo,
   },
   {

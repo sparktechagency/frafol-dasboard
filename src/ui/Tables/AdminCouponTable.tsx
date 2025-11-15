@@ -3,6 +3,8 @@ import React from "react";
 import { Space, Switch, Tag, Tooltip } from "antd";
 import { MdDelete, MdEdit } from "react-icons/md";
 import ReuseTable from "../../utils/ReuseTable";
+import { useUpdateStatusMutation } from "../../redux/features/coupon/couponApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 // Define the type for the props
 interface AdminCouponTableProps {
@@ -26,6 +28,16 @@ const AdminCouponTable: React.FC<AdminCouponTableProps> = ({
   total,
   limit,
 }) => {
+  const [updateStatus] = useUpdateStatusMutation();
+
+  const handleStatusChange = async (record: any, checked: boolean) => {
+    await tryCatchWrapper(
+      updateStatus,
+      { body: { status: checked }, params: { id: record?._id } },
+      "Updating Status..."
+    );
+  };
+
   const columns = [
     {
       title: "Code",
@@ -81,12 +93,12 @@ const AdminCouponTable: React.FC<AdminCouponTableProps> = ({
     },
     {
       title: "Active",
-      dataIndex: "active",
-      key: "active",
+      dataIndex: "isActive",
+      key: "isActive",
       render: (value: boolean, record: any) => (
         <Switch
-          checked={value}
-          onChange={(checked) => console.log(record, checked)}
+          checked={value as boolean}
+          onChange={(checked) => handleStatusChange(record, checked)}
         />
       ),
       align: "center",

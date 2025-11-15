@@ -11,12 +11,16 @@ import { Form } from "antd";
 import AdminCouponTable from "../../ui/Tables/AdminCouponTable";
 import AdminCreateCuponModal from "../../ui/Modal/AdminCupon/AdminCreateCuponModal";
 import AdminUpdateCuponModal from "../../ui/Modal/AdminCupon/AdminUpdateCuponModal";
-import { useGetCouponQuery } from "../../redux/features/coupon/couponApi";
+import {
+  useDeleteCouponMutation,
+  useGetCouponQuery,
+} from "../../redux/features/coupon/couponApi";
+import tryCatchWrapper from "../../utils/tryCatchWrapper";
 // import tryCatchWrapper from "../../utils/tryCatchWrapper";
 
 const AdminAllCupon = () => {
   const [form] = Form.useForm();
-  //   const [deleteCategory] = useDeleteCategoryMutation();
+  const [deleteCoupon] = useDeleteCouponMutation();
 
   const limit = 10;
   const [page, setPage] = useState(1);
@@ -61,12 +65,12 @@ const AdminAllCupon = () => {
   };
 
   const handleDelete = async (data: any) => {
-    // const response = await tryCatchWrapper(deleteCategory, {
-    //   params: { id: data?._id },
-    // });
-    // if (response?.statusCode === 200) {
-    //   handleCancel();
-    // }
+    const response = await tryCatchWrapper(deleteCoupon, {
+      params: { id: data?._id },
+    });
+    if (response?.statusCode === 200) {
+      handleCancel();
+    }
     console.log(data);
   };
 
