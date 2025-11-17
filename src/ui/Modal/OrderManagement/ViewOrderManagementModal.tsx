@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { FaClock } from "react-icons/fa6";
@@ -7,6 +9,10 @@ import { AllImages } from "../../../../public/images/AllImages";
 import { formatDate, formetTime } from "../../../utils/dateFormet";
 import { budgetLabels } from "../../../utils/budgetLabels";
 import ReuseButton from "../../Button/ReuseButton";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+import { toast } from "sonner";
+import InvoiceDocumentFromAdminSide from "../../../utils/InvoiceDocumentFromAdminSide";
 
 interface ViewOrderManagementModalProps {
   isViewModalVisible: boolean;
@@ -20,8 +26,26 @@ const ViewOrderManagementModal: React.FC<ViewOrderManagementModalProps> = ({
 }) => {
   const serverUrl = getImageUrl();
 
-  //   const extensionLength = currentRecord?.extensionRequests?.length || 0;
-
+  const handleProfessionalInvoiceDownload = (currentRecord: IEventOrder) => {
+    const toastId = toast.loading("Downloading...", {
+      duration: 2000,
+    });
+    // Generate the PDF using @react-pdf/renderer's pdf function
+    pdf(
+      <InvoiceDocumentFromAdminSide
+        currentRecord={currentRecord as IEventOrder}
+      />
+    )
+      .toBlob()
+      .then((blob: any) => {
+        // Use file-saver to trigger the download
+        saveAs(blob, `${currentRecord.orderId}-invoice.pdf`);
+        toast.success("Downloaded successfully!", { id: toastId });
+      })
+      .catch((_error: any) => {
+        toast.error("Download failed", { id: toastId });
+      });
+  };
   return (
     <Modal
       open={isViewModalVisible}
@@ -219,10 +243,13 @@ const ViewOrderManagementModal: React.FC<ViewOrderManagementModalProps> = ({
           )}
         {currentRecord?.status === "delivered" ? (
           <div className="mt-5 flex flex-col items-center gap-5">
-            <ReuseButton variant="secondary" className="!w-fit">
-              Download Invoice With Client
-            </ReuseButton>
-            <ReuseButton variant="secondary" className="!w-fit">
+            <ReuseButton
+              onClick={() =>
+                handleProfessionalInvoiceDownload(currentRecord as IEventOrder)
+              }
+              variant="secondary"
+              className="!w-fit"
+            >
               Download Invoice with Admin
             </ReuseButton>
           </div>

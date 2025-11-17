@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Modal } from "antd";
 import { getImageUrl } from "../../../helpers/config/envConfig";
 import { AllImages } from "../../../../public/images/AllImages";
 import { IGearOrder } from "../../../types";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+import { toast } from "sonner";
+import InvoiceGearFromAdminSide from "../../../utils/InvoiceGearFromAdminSide";
+
 interface GearOrderViewModalProps {
   isViewModalVisible: boolean;
   handleCancel: () => void;
@@ -13,7 +19,25 @@ const GearOrderViewModal: React.FC<GearOrderViewModalProps> = ({
   currentRecord,
 }) => {
   const serverUrl = getImageUrl();
-  console.log(`Current Record in Modal:`, currentRecord);
+  const handleAdminGearInvoiceDownload = (currentRecord: IGearOrder) => {
+    const toastId = toast.loading("Downloading...", {
+      duration: 2000,
+    });
+    // Generate the PDF using @react-pdf/renderer's pdf function
+    pdf(
+      <InvoiceGearFromAdminSide currentRecord={currentRecord as IGearOrder} />
+    )
+      .toBlob()
+      .then((blob: any) => {
+        // Use file-saver to trigger the download
+        saveAs(blob, `${currentRecord.orderId}-invoice.pdf`);
+        toast.success("Downloaded successfully!", { id: toastId });
+      })
+      .catch((error: any) => {
+        console.log(error);
+        toast.error("Download failed", { id: toastId });
+      });
+  };
   return (
     <Modal
       open={isViewModalVisible}
@@ -118,6 +142,19 @@ const GearOrderViewModal: React.FC<GearOrderViewModalProps> = ({
         <div className="bg-white rounded-lg border border-[#E1E1E1] p-4">
           <h3 className="font-semibold mb-2">Delivery Note</h3>
           <p className="text-sm ">{currentRecord?.deliveryNote || "N/A"}</p>
+        </div>
+
+        <div className="flex gap-4">
+          {currentRecord?.orderStatus === "delivered" && (
+            <button
+              onClick={() =>
+                handleAdminGearInvoiceDownload(currentRecord as IGearOrder)
+              }
+              className="!bg-secondary-color hover:!bg-secondary-color text-white px-4 py-2 rounded !cursor-pointer"
+            >
+              Download Invoice Admin
+            </button>
+          )}
         </div>
       </div>
     </Modal>
