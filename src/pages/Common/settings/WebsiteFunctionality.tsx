@@ -9,12 +9,14 @@ import {
 import { toast } from "sonner";
 import Loading from "../../../ui/Loading";
 
-const TermsOfService = () => {
+const WebsiteFunctionality = () => {
   const [addStaticContent] = useUpdateSettingMutation();
   const editor = useRef(null);
   const [content, setContent] = useState("");
 
-  const { data, isFetching } = useGetSettingQuery("termsService");
+  const { data, isFetching } = useGetSettingQuery(
+    "websiteFunctionalityCompatibility"
+  );
 
   useEffect(() => {
     if (data) {
@@ -24,7 +26,7 @@ const TermsOfService = () => {
 
   const handleOnSave = async () => {
     const data = {
-      key: "termsService",
+      key: "websiteFunctionalityCompatibility",
       content,
     };
     const toastId = toast.loading("Updating ...");
@@ -49,7 +51,7 @@ const TermsOfService = () => {
     <div className=" bg-primary-color rounded-xl p-4 min-h-[90vh]">
       <div className="flex justify-between items-center mx-3 py-2 mb-5">
         <p className="text-xl sm:text-2xl lg:text-3xl text-base-color font-bold ">
-          Terms of Service
+          Website Functionality & Compatibility
         </p>
       </div>
       <div className=" flex justify-center items-center">
@@ -70,4 +72,4 @@ const TermsOfService = () => {
     </div>
   );
 };
-export default TermsOfService;
+export default WebsiteFunctionality;

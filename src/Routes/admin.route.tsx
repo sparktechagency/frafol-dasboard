@@ -39,6 +39,10 @@ import InteractionMessages from "../pages/Admin/InteractionManagement/Interactio
 import InteractionCommunityForum from "../pages/Admin/InteractionManagement/InteractionCommunityForum";
 import AdminAllCupon from "../pages/Admin/AdminAllCupon";
 import AdminAllInsucance from "../pages/Admin/AdminAllInsucance";
+import PrivacyAndPolicy from "../pages/Common/settings/PrivacyAndPolicy";
+import WebsiteFunctionality from "../pages/Common/settings/WebsiteFunctionality";
+import SearchAlgorithm from "../pages/Common/settings/SearchAlgorithm";
+import AdminAllSubscribe from "../pages/Admin/AdminAllSubscribe";
 
 export const adminPaths = [
   {
@@ -155,6 +159,13 @@ export const adminPaths = [
     icon: feedbackLogo,
   },
   {
+    path: "newsletter",
+    element: <AdminAllSubscribe />,
+    key: "newsletter",
+    name: "Newsletter",
+    icon: feedbackLogo,
+  },
+  {
     key: "interaction-management",
     name: "Interaction",
     icon: documentationLogo,
@@ -180,6 +191,13 @@ export const adminPaths = [
     name: "Documentation",
     icon: documentationLogo,
     children: [
+      {
+        key: "privacy-policy",
+        path: "documentation/privacy-policy",
+        name: "Privacy Policy",
+        icon: dashboardLogo,
+        element: <PrivacyAndPolicy />,
+      },
       {
         key: "terms-of-service",
         path: "documentation/terms-of-service",
@@ -214,6 +232,20 @@ export const adminPaths = [
         name: "Framework Agreement",
         icon: dashboardLogo,
         element: <FrameworkAgreement />,
+      },
+      {
+        key: "search-algorithm",
+        path: "documentation/search-algorithm",
+        name: "Search Algorithm",
+        icon: dashboardLogo,
+        element: <SearchAlgorithm />,
+      },
+      {
+        key: "website-functionality-and-compatibility",
+        path: "documentation/website-functionality-and-compatibility",
+        name: " Website Functionality",
+        icon: dashboardLogo,
+        element: <WebsiteFunctionality />,
       },
     ],
   },
