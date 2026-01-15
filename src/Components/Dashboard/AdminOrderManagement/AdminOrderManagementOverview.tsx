@@ -1,34 +1,54 @@
 import { RiShoppingBag2Fill } from "react-icons/ri";
+import { useGetOrderStatesQuery } from "../../../redux/features/orderManagement/orderManagementApi";
 
 const AdminOrderManagementOverview = () => {
+
+  const { data, isFetching } = useGetOrderStatesQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
+    }
+  )
+
+
+  // data: {
+  //     totalOrders: 27,
+  //     completedOrders: 7,
+  //     activeOrders: 9,
+  //     cancelledOrders: 1
+  //   }
+
+  console.log(data)
+
   const countData = [
     {
       id: 1,
       background: "#ffffff",
       name: "Total Orders",
       icon: <RiShoppingBag2Fill className="size-5 text-secondary-color" />,
-      count: 44,
+      count: isFetching ? "--" : data?.data?.totalOrders || 0,
     },
     {
       id: 2,
       background: "#ffffff",
       name: "Completed Orders",
       icon: <RiShoppingBag2Fill className="size-5 text-secondary-color" />,
-      count: 2,
+      count: isFetching ? "--" : data?.data?.completedOrders || 0,
     },
     {
       id: 3,
       background: "#ffffff",
       name: "Active Orders",
       icon: <RiShoppingBag2Fill className="size-6 text-secondary-color" />,
-      count: "$500",
+      count: isFetching ? "--" : data?.data?.activeOrders || 0,
     },
     {
       id: 4,
       background: "#ffffff",
       name: "Cancelled Orders",
       icon: <RiShoppingBag2Fill className="size-6 text-secondary-color" />,
-      count: 12,
+      count: isFetching ? "--" : data?.data?.cancelledOrders || 0,
     },
   ];
   return (

@@ -19,6 +19,7 @@ const AdminAllReports = () => {
     },
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
   console.log(data);

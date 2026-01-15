@@ -70,6 +70,7 @@ interface IEventOrder {
     _id: string;
     title: string;
     price: string;
+    description: string;
   }; // Optional, if order is related to a package
   packageName?: string; // Optional, name of the package
   deliveryDate?: Date; // Optional, expected delivery date

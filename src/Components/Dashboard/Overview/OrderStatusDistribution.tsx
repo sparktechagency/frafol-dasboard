@@ -11,6 +11,7 @@ const OrderStatusDistribution = () => {
     },
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
 

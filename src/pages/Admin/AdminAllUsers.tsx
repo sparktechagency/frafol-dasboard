@@ -33,7 +33,7 @@ const AdminAllUsers = () => {
       searchTerm: searchText,
       type: activeTab,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
   const userData = data?.data;
   const total = data?.meta?.total || 0;

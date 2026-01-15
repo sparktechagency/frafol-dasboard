@@ -22,7 +22,7 @@ const AdminWorkshopManagement = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const workshopData: IWorkshop[] = data?.data?.result || [];

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Link } from "react-router-dom";
+
 const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
   // Example stats (you’ll probably get these from props or API)
 
@@ -11,6 +13,7 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
         text: "Client confirmed Delivery",
         count: quickActions?.totalConfirmedDeliveries,
       },
+      link: "/admin/delivery-management",
     },
     {
       id: "2",
@@ -18,6 +21,7 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
         text: "Pending User Approvals",
         count: quickActions?.totalPendingUsers,
       },
+      link: "/admin/approvals?tab=professionals",
     },
     {
       id: "3",
@@ -25,6 +29,7 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
         text: "Workshop Approvals",
         count: quickActions?.totalPendingWorkshops,
       },
+      link: "/admin/approvals?tab=workshop",
     },
     {
       id: "4",
@@ -32,6 +37,7 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
         text: "Packages Approvals",
         count: quickActions?.totalPendingPackages,
       },
+      link: "/admin/approvals?tab=packages",
     },
     {
       id: "5",
@@ -39,6 +45,7 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
         text: "Gear Item Approvals",
         count: quickActions?.totalPendingGears,
       },
+      link: "/admin/approvals?tab=gear",
     },
   ];
 
@@ -55,18 +62,20 @@ const QuickActionRequired = ({ quickActions }: { quickActions: any }) => {
       {/* Notification List */}
       <div className="flex flex-col gap-5 p-5 bg-primary-color">
         {notificationData.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#EFEFEF]"
-          >
-            <p className="text-secondary-color text-xs sm:text-sm lg:text-base font-semibold">
-              {item.message.text}
-            </p>
+          <Link key={item.id} to={item.link}>
+            <div
+              key={item.id}
+              className="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#EFEFEF]"
+            >
+              <p className="text-secondary-color text-xs sm:text-sm lg:text-base font-semibold">
+                {item.message.text}
+              </p>
 
-            <p className="text-sm bg-secondary-color px-2.5 py-1 rounded-full text-primary-color">
-              {item.message.count}
-            </p>
-          </div>
+              <p className="text-sm bg-secondary-color px-2.5 py-1 rounded-full text-primary-color">
+                {item.message.count}
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

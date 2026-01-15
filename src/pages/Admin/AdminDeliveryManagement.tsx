@@ -37,6 +37,7 @@ const AdminDeliveryManagement = () => {
     },
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
 

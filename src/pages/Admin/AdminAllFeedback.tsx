@@ -16,7 +16,7 @@ const AdminAllFeedback = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const allFeedback: IFeedback[] = data?.data?.result || [];

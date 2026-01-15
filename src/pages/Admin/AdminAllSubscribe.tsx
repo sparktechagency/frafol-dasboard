@@ -12,7 +12,7 @@ const AdminAllSubscribe = () => {
       limit,
       page,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const allSubs: any[] = data?.data?.subscribers || [];

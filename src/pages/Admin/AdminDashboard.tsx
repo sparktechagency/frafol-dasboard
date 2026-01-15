@@ -10,6 +10,7 @@ const AdminDashboard = () => {
     {},
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
   const stats = data?.data || {};

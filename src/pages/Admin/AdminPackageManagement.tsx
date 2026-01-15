@@ -24,7 +24,7 @@ const AdminPackageManagement = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const packageData: IPackage[] = data?.data?.result || [];

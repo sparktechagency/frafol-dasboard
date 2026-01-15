@@ -37,6 +37,7 @@ const AdminOrderManagement = () => {
     {
       refetchOnMountOrArgChange: true,
       skip: activeTab !== "photographyVideography",
+      pollingInterval: 600000
     }
   );
 
@@ -53,6 +54,7 @@ const AdminOrderManagement = () => {
       {
         refetchOnMountOrArgChange: true,
         skip: activeTab === "photographyVideography",
+        pollingInterval: 600000
       }
     );
 

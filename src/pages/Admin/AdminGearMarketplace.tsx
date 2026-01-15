@@ -24,7 +24,7 @@ const AdminGearMarketplacePage = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const gearMarketplaceData: IGear[] = data?.data?.result || [];

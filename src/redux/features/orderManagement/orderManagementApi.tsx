@@ -3,6 +3,13 @@ import { tagTypes } from "../../tagTypes";
 
 const orderManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getOrderStates: builder.query({
+      query: () => ({
+        url: "/users/order-stats",
+        method: "GET",
+      }),
+      providesTags: [tagTypes.orderManagement],
+    }),
     getAllOrderManagement: builder.query({
       query: ({ page, limit, searchTerm }) => {
         return {
@@ -25,7 +32,7 @@ const orderManagementApi = baseApi.injectEndpoints({
     }),
     cancelOrder: builder.mutation({
       query: (req) => ({
-        url: `/event-order/cancel/${req?.params}`,
+        url: `/event-order/admin/cancel/${req?.params}`,
         method: "PATCH",
         body: req.body,
       }),
@@ -43,6 +50,7 @@ const orderManagementApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetOrderStatesQuery,
   useGetAllOrderManagementQuery,
   useGetAllGearOrderManagementQuery,
   useCancelOrderMutation,

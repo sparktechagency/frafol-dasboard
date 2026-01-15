@@ -1,6 +1,9 @@
 interface IProfessional {
   _id: string;
-  profileId: string;
+  profileId: {
+    _id: string;
+    about: string;
+  };
   name: string;
   sureName: string;
   companyName: string;
@@ -12,6 +15,8 @@ interface IProfessional {
   town: string;
   country: string;
   hourlyRate: number;
+  maxHourlyRate: number;
+  minHourlyRate: number;
   ico: string;
   dic: string;
   ic_dph: string;

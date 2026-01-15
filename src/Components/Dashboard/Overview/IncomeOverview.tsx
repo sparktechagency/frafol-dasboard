@@ -13,6 +13,7 @@ const IncomeOverview = () => {
     },
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
 

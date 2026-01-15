@@ -40,11 +40,6 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
         page * limit - limit + index + 1,
     },
     {
-      title: "Profile ID",
-      dataIndex: "profileId",
-      key: "profileId",
-    },
-    {
       title: "Name",
       dataIndex: "name",
       key: "name",
@@ -79,6 +74,7 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
       dataIndex: "videographerSpecializations",
       key: "specializations",
       render: (arr: string[]) => (arr?.length ? arr.join(", ") : "—"),
+      width: 450,
     },
     {
       title: "Join Date",
@@ -118,7 +114,7 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
           {/* View Details Tooltip */}
           <Tooltip placement="right" title="View Details">
             <button
-              className="!p-0 !bg-transparent !border-none !text-secondary-color"
+              className="!p-0 !bg-transparent !border-none !text-secondary-color cursor-pointer"
               onClick={() => showViewModal(record)}
             >
               <GoEye style={{ fontSize: "24px" }} />
@@ -129,7 +125,7 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
           {record.isBlocked ? (
             <Tooltip placement="left" title="Unblock this User">
               <button
-                className="!p-0 !bg-transparent !border-none !text-base-color"
+                className="!p-0 !bg-transparent !border-none !text-base-color cursor-pointer"
                 onClick={() => showUnblockModal(record)}
               >
                 <CgUnblock style={{ fontSize: "24px" }} />
@@ -138,7 +134,7 @@ const UserProfessionalTable: React.FC<UserProfessionalTableProps> = ({
           ) : (
             <Tooltip placement="left" title="Block this User">
               <button
-                className="!p-0 !bg-transparent !border-none !text-error-color"
+                className="!p-0 !bg-transparent !border-none !text-error cursor-pointer"
                 onClick={() => showBlockModal(record)}
               >
                 <MdBlock style={{ fontSize: "24px" }} />

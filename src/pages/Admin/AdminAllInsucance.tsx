@@ -16,7 +16,7 @@ const AdminAllInsucance = () => {
       page,
       searchTerm: searchText,
     },
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const allFeedback: IInsurance[] = data?.data || [];

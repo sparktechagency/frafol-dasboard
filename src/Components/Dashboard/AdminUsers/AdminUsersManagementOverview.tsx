@@ -13,7 +13,7 @@ interface IOverviewData {
 const AdminUsersManagementOverview = () => {
   const { data, isFetching } = useGetAllUsersOverviewQuery(
     {},
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const overviewData: IOverviewData = data?.data || {};

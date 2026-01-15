@@ -64,8 +64,11 @@ const ViewOrderManagementModal: React.FC<ViewOrderManagementModalProps> = ({
           <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-secondary-color font-bold">
             {currentRecord?.packageId?.title || "Custom Order"}
           </p>
-          <p className="text-sm sm:text-base lg:text-kg xl:text-xl font-medium capitalize mt-1">
+          <p className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium capitalize mt-1">
             {currentRecord?.serviceType}
+          </p>
+          <p className="text-xs sm:text-sm lg:text-base xl:text-lg mt-2 text-base-color/80">
+            {currentRecord?.packageId?.description}
           </p>
         </div>
 

@@ -18,6 +18,7 @@ const AdminAllTransaction = () => {
     },
     {
       refetchOnMountOrArgChange: true,
+      pollingInterval: 600000
     }
   );
 

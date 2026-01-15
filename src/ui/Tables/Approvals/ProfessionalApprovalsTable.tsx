@@ -42,8 +42,8 @@ const ProfessionalApprovalsTable: React.FC<ProfessionalApprovalsTableProps> = ({
         role === "both"
           ? "Photographer/Videographer"
           : role === "photographer"
-          ? "Photographer"
-          : "Videographer",
+            ? "Photographer"
+            : "Videographer",
     },
     {
       title: "Specialization",
@@ -53,14 +53,14 @@ const ProfessionalApprovalsTable: React.FC<ProfessionalApprovalsTableProps> = ({
       render: (_: unknown, record: IProfessional) =>
         record.role === "both"
           ? [
-              record?.photographerSpecializations?.join(", "),
-              record?.videographerSpecializations?.join(", "),
-            ].join(" , ")
+            record?.photographerSpecializations?.join(", "),
+            record?.videographerSpecializations?.join(", "),
+          ].join(" , ")
           : record.role === "photographer"
-          ? record?.photographerSpecializations?.join(", ")
-          : record?.videographerSpecializations?.join(", "),
+            ? record?.photographerSpecializations?.join(", ")
+            : record?.videographerSpecializations?.join(", "),
     },
-    { title: "Hourly Rate", dataIndex: "hourlyRate", key: "hourlyRate" },
+    { title: "Hourly Rate", dataIndex: "hourlyRate", key: "hourlyRate", render: (_: unknown, record: IProfessional) => `${record?.minHourlyRate}€ - ${record?.maxHourlyRate}€` },
     { title: "Location", dataIndex: "address", key: "address" },
     {
       title: "Action",

@@ -5,7 +5,10 @@ import { AllImages } from "../../../../public/images/AllImages";
 
 const professionalInitialValues: IProfessional = {
   _id: "",
-  profileId: "",
+  profileId: {
+    _id: "",
+    about: "",
+  },
   name: "",
   sureName: "",
   companyName: "",
@@ -23,6 +26,8 @@ const professionalInitialValues: IProfessional = {
   rating: 0,
   totalReview: 0,
   averageRating: 0,
+  maxHourlyRate: 0,
+  minHourlyRate: 0,
   photographerSpecializations: [],
   videographerSpecializations: [],
   adminVerified: "",
@@ -150,11 +155,7 @@ const ViewProfessional = ({
             <span className="font-medium text-secondary-color">About:</span>
             <div className="text-sm sm:text-base lg:text-lg text-base-color mt-1 p-2 bg-gray-100 rounded-md">
               <span>
-                The upload speed on your platform is painfully slow, which is
-                causing significant delays in my work. Because of this, I’m
-                struggling to meet important client deadlines, and it’s starting
-                to impact my professional reputation. Please address this issue
-                as soon as possible."
+                {currentRecord?.profileId?.about}
               </span>
             </div>
           </div>
@@ -165,8 +166,8 @@ const ViewProfessional = ({
               Hourly Rate:
             </span>
             <span className="text-sm sm:text-base lg:text-lg text-secondary-color mt-1 p-1.5 bg-gray-100 rounded-md font-extrabold">
-              {currentRecord?.hourlyRate
-                ? `€${currentRecord.hourlyRate}`
+              {currentRecord
+                ? ` ${currentRecord.minHourlyRate}€ - ${currentRecord.maxHourlyRate}€`
                 : "N/A"}
             </span>
           </div>

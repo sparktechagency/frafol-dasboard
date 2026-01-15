@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReuseSearchInput from "../../ui/Form/ReuseSearchInput";
 import ReusableTabs from "../../ui/ReusableTabs";
 import ProfessionalApprovalsTable from "../../ui/Tables/Approvals/ProfessionalApprovalsTable";
@@ -29,6 +29,7 @@ import {
   useGetAllPendingWorkshopQuery,
   useUpdateWorkshopApprovalStatusMutation,
 } from "../../redux/features/workshop/workshopApi";
+import { useSearchParams } from "react-router-dom";
 const AdminApprovals = () => {
   const limit = 12;
   const [page, setPage] = useState(1);
@@ -37,6 +38,20 @@ const AdminApprovals = () => {
     "professionals" | "packages" | "gear" | "workshop"
   >("professionals");
   const [form] = Form.useForm();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+
+    if (tabParam && ['professionals', 'packages', 'gear', 'workshop'].includes(tabParam)) {
+      setActiveTab(tabParam as "professionals" | "packages" | "gear" | "workshop");
+
+      searchParams.delete('tab');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, []);
+
 
   const [approveProfessional] = useApproveProfessionalMutation();
   const [declineProfessional] = useDeclineProfessionalMutation();
@@ -51,7 +66,7 @@ const AdminApprovals = () => {
         limit,
         searchTerm: searchText,
       },
-      { skip: activeTab !== "professionals", refetchOnMountOrArgChange: true }
+      { skip: activeTab !== "professionals", refetchOnMountOrArgChange: true, pollingInterval: 600000 }
     );
 
   const allProfessionals: IProfessional[] = professional?.data || [];
@@ -64,7 +79,7 @@ const AdminApprovals = () => {
         limit,
         searchTerm: searchText,
       },
-      { skip: activeTab !== "packages", refetchOnMountOrArgChange: true }
+      { skip: activeTab !== "packages", refetchOnMountOrArgChange: true, pollingInterval: 600000 }
     );
 
   const allpackage: IPackage[] = packages?.data?.result || [];
@@ -76,7 +91,7 @@ const AdminApprovals = () => {
       limit,
       searchTerm: searchText,
     },
-    { skip: activeTab !== "gear", refetchOnMountOrArgChange: true }
+    { skip: activeTab !== "gear", refetchOnMountOrArgChange: true, pollingInterval: 600000 }
   );
 
   const allGear: IGear[] = gear?.data || [];
@@ -89,7 +104,7 @@ const AdminApprovals = () => {
         limit,
         searchTerm: searchText,
       },
-      { skip: activeTab !== "workshop", refetchOnMountOrArgChange: true }
+      { skip: activeTab !== "workshop", refetchOnMountOrArgChange: true, pollingInterval: 600000 }
     );
 
   const allWorkshop: IWorkshop[] = workshop?.data?.result || [];
